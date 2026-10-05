@@ -13,24 +13,18 @@ const listeTransactions = document.getElementById("liste-transactions");
 const messageVide = document.getElementById("message-vide");
 
 // ===== 2. INITIALISATION DES DONNÉES =====
-// On récupère les transactions stockées dans localStorage, ou un tableau vide si rien n'existe encore
 let transactions = JSON.parse(localStorage.getItem("studwallet_transactions")) || [];
 
 // ===== 3. FONCTIONS DE STOCKAGE ET DE GESTION =====
-
-// Sauvegarde le tableau dans localStorage
 function sauvegarder() {
   localStorage.setItem("studwallet_transactions", JSON.stringify(transactions));
 }
 
-// Gestion de la soumission du formulaire
 formulaire.addEventListener("submit", function (e) {
   e.preventDefault();
 
-  // Récupération de la valeur du bouton radio coché (revenu ou depense)
   const typeInput = document.querySelector('input[name="type"]:checked');
 
-  // Création de l'objet transaction
   const nouvelleTransaction = {
     id: Date.now(),
     montant: parseFloat(montantInput.value),
@@ -40,23 +34,17 @@ formulaire.addEventListener("submit", function (e) {
     type: typeInput.value
   };
 
-  // Ajout au tableau et sauvegarde
   transactions.push(nouvelleTransaction);
   sauvegarder();
 
-  // Reinitialisation du formulaire
   formulaire.reset();
-  // On remet "Dépense" par défaut après reset
   document.querySelector('input[name="type"][value="depense"]').checked = true;
 
-  // Mise à jour de l'affichage (fonction qu'on va écrire à l'étape suivante)
   mettreAJourAffichage();
 });
 
 // ===== 4. AFFICHAGE ET CALCULS =====
-
 function mettreAJourAffichage() {
-  // --- A. Affichage du message vide ou de la liste ---
   if (transactions.length === 0) {
     messageVide.style.display = "block";
     listeTransactions.innerHTML = "";
@@ -64,11 +52,13 @@ function mettreAJourAffichage() {
     messageVide.style.display = "none";
     listeTransactions.innerHTML = "";
 
-    // On parcourt les transactions (de la plus récente à la plus ancienne)
     [...transactions].reverse().forEach((item) => {
       const li = document.createElement("li");
 
-      const dateFormatee = new Date(item.date).toLocaleDateString("fr-FR");
+      // Decoupage propre de AAAA-MM-JJ sans decalage de fuseau horaire
+      const [annee, mois, jour] = item.date.split("-");
+      const dateFormatee = `${jour}/${mois}/${annee}`;
+
       const classeMontant = item.type === "revenu" ? "montant-revenu" : "montant-depense";
       const signe = item.type === "revenu" ? "+" : "-";
 
@@ -88,7 +78,7 @@ function mettreAJourAffichage() {
             onclick="supprimerTransaction(${item.id})" 
             style="background: none; border: none; color: var(--rouge); cursor: pointer; font-size: 16px;" 
             title="Supprimer">
-            🗑️️
+            🗑
           </button>
         </div>
       `;
@@ -97,26 +87,26 @@ function mettreAJourAffichage() {
     });
   }
 
-  // --- B. Calculs (Solde, Revenus du mois, Dépenses du mois) ---
+  // Calculs (Solde global et mois en cours)
   const dateActuelle = new Date();
-  const moisActuel = dateActuelle.getMonth();
-  const anneeActuelle = dateActuelle.getFullYear();
+  const moisActuel = (dateActuelle.getMonth() + 1).toString().padStart(2, "0");
+  const anneeActuelle = dateActuelle.getFullYear().toString();
 
   let totalSolde = 0;
   let totalRevenusMois = 0;
   let totalDepensesMois = 0;
 
   transactions.forEach((item) => {
-    // Calcul du solde global
+    // Solde global
     if (item.type === "revenu") {
       totalSolde += item.montant;
     } else {
       totalSolde -= item.montant;
     }
 
-    // Calcul de la synthèse du mois
-    const dateTransac = new Date(item.date);
-    if (dateTransac.getMonth() === moisActuel && dateTransac.getFullYear() === anneeActuelle) {
+    // Synthese du mois (comparaison directe des chaines "AAAA" et "MM")
+    const [transacAnnee, transacMois] = item.date.split("-");
+    if (transacAnnee === anneeActuelle && transacMois === moisActuel) {
       if (item.type === "revenu") {
         totalRevenusMois += item.montant;
       } else {
@@ -125,18 +115,17 @@ function mettreAJourAffichage() {
     }
   });
 
-  // Mise à jour des textes HTML
   soldeElement.textContent = `${totalSolde.toFixed(2).replace(".", ",")} €`;
   revenusMoisElement.textContent = `+ ${totalRevenusMois.toFixed(2).replace(".", ",")} €`;
   depensesMoisElement.textContent = `- ${totalDepensesMois.toFixed(2).replace(".", ",")} €`;
 }
 
 // ===== 5. SUPPRESSION D'UNE TRANSACTION =====
-function supprimerTransaction(id) {
+window.supprimerTransaction = function (id) {
   transactions = transactions.filter((t) => t.id !== id);
   sauvegarder();
   mettreAJourAffichage();
-}
+};
 
 // ===== 6. CHARGEMENT INITIAL =====
 mettreAJourAffichage();

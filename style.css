@@ -1,0 +1,236 @@
+/* ===== Variables de couleur ===== */
+:root {
+  --vert: #34D399;
+  --vert-clair: #D1FAE5;
+  --vert-texte: #059669;
+  --rouge: #EF4444;
+  --bleu-fonce: #1E3A8A;
+  --fond: #FAFAF8;
+  --texte: #1F2937;
+  --gris: #6B7280;
+  --bordure: #E5E7EB;
+}
+
+/* ===== Base ===== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--fond);
+  color: var(--texte);
+  font-family: "Nunito", "Segoe UI", Arial, sans-serif;
+}
+
+header {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 20px 0;
+}
+
+h1 {
+  margin: 0;
+  color: var(--vert-texte);
+  font-size: 28px;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+p {
+  margin: 0;
+}
+
+/* ===== Mise en page à deux colonnes ===== */
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.colonne-principale {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.colonne-formulaire {
+  align-self: start;
+}
+
+/* ===== Cartes ===== */
+.carte {
+  background-color: white;
+  border: 1px solid var(--bordure);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.synthese {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ===== Solde ===== */
+.carte-solde {
+  background-color: var(--vert-clair);
+  border-color: var(--vert-clair);
+}
+
+#solde {
+  margin-top: 8px;
+  color: var(--vert-texte);
+  font-size: 40px;
+  font-weight: bold;
+}
+
+/* ===== Revenus et dépenses du mois ===== */
+#revenus-mois,
+#depenses-mois {
+  margin-top: 8px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+#revenus-mois {
+  color: var(--vert-texte);
+}
+
+#depenses-mois {
+  color: var(--rouge);
+}
+
+/* ===== Liste des transactions ===== */
+#message-vide {
+  color: var(--gris);
+}
+
+#liste-transactions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#liste-transactions li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.montant-revenu {
+  color: var(--vert-texte);
+  font-weight: bold;
+}
+
+.montant-depense {
+  color: var(--rouge);
+  font-weight: bold;
+}
+
+/* ===== Formulaire ===== */
+label {
+  display: block;
+  margin-top: 14px;
+  margin-bottom: 4px;
+  color: var(--gris);
+  font-size: 14px;
+}
+
+input[type="number"],
+input[type="date"],
+input[type="text"],
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--bordure);
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid var(--vert);
+}
+
+/* ===== Toggle Revenu / Dépense ===== */
+.toggle-type {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.toggle-type label {
+  flex: 1;
+  margin: 0;
+}
+
+/* On cache le rond du bouton radio, seul le texte reste visible */
+.toggle-type input {
+  display: none;
+}
+
+.toggle-type span {
+  display: block;
+  padding: 10px;
+  border: 1px solid var(--bordure);
+  border-radius: 999px;
+  background-color: white;
+  color: var(--gris);
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Quand le bouton est coché : vert pour Revenu, rouge pour Dépense */
+.toggle-type input[value="revenu"]:checked + span {
+  background-color: var(--vert);
+  border-color: var(--vert);
+  color: white;
+}
+
+.toggle-type input[value="depense"]:checked + span {
+  background-color: var(--rouge);
+  border-color: var(--rouge);
+  color: white;
+}
+
+/* ===== Bouton Ajouter ===== */
+button[type="submit"] {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  border: none;
+  border-radius: 999px;
+  background-color: var(--bleu-fonce);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #172554;
+}
+
+/* ===== Petits écrans : une seule colonne ===== */
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .synthese {
+    grid-template-columns: 1fr;
+  }
+}

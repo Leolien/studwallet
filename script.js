@@ -1,4 +1,4 @@
-// ===== 1. SÉLECTION DES ÉLÉMENTS HTML =====
+// SÉLECTION DES ÉLÉMENTS HTML 
 const formulaire = document.getElementById("formulaire");
 const montantInput = document.getElementById("montant");
 const categorieInput = document.getElementById("categorie");
@@ -12,23 +12,14 @@ const depensesMoisElement = document.getElementById("depenses-mois");
 const listeTransactions = document.getElementById("liste-transactions");
 const messageVide = document.getElementById("message-vide");
 
-// ===== 2. CHARGEMENT INITIAL DES DONNÉES =====
-// On récupère les données dans localStorage. Si c'est vide, on initialise un tableau vide.
-let transactions = [];
-const donneesSauvegardees = localStorage.getItem("studwallet_transactions");
+// FONCTIONS UTILES
 
-if (donneesSauvegardees !== null) {
-  transactions = JSON.parse(donneesSauvegardees);
+// Arrondit un nombre à 2 décimales (évite les erreurs comme 0.1 + 0.2 = 0.30000000000000004)
+function arrondirMontant(montant) {
+  return Math.round(montant * 100) / 100;
 }
 
-// ===== 3. FONCTIONS DE SAUVEGARDE ET MISE À JOUR =====
-
-// Sauvegarde dans le navigateur
-function sauvegarder() {
-  localStorage.setItem("studwallet_transactions", JSON.stringify(transactions));
-}
-
-// Transforme un nombre en texte formaté avec la virgule (ex: 12.50 -> "12,50 €")
+// Transforme un nombre en texte avec la virgule (ex : 12.5 -> "12,50 €")
 function formaterPrix(montant) {
   return montant.toFixed(2).replace(".", ",") + " €";
 }
@@ -42,7 +33,72 @@ function formaterDate(dateTexte) {
   return jour + "/" + mois + "/" + annee;
 }
 
-// ===== 4. AFFICHAGE DE LA LISTE ET CALCULS =====
+// Renvoie la date d'aujourd'hui au format "2026-10-05" (format attendu par le champ date)
+function obtenirDateDuJour() {
+  const aujourdhui = new Date();
+  const annee = aujourdhui.getFullYear();
+  const mois = (aujourdhui.getMonth() + 1).toString().padStart(2, "0");
+  const jour = aujourdhui.getDate().toString().padStart(2, "0");
+  return annee + "-" + mois + "-" + jour;
+}
+
+// Remplace les caractères spéciaux du HTML pour qu'un texte tapé par l'utilisateur
+// s'affiche tel quel au lieu d'être interprété comme du code
+function nettoyerTexte(texte) {
+  let resultat = String(texte);
+  resultat = resultat.replaceAll("&", "&amp;");
+  resultat = resultat.replaceAll("<", "&lt;");
+  resultat = resultat.replaceAll(">", "&gt;");
+  resultat = resultat.replaceAll('"', "&quot;");
+  return resultat;
+}
+
+// CHARGEMENT ET SAUVEGARDE (localStorage) 
+
+let transactions = [];
+
+// Lit les transactions enregistrées. Si les données sont absentes ou abîmées,
+// on repart avec une liste vide au lieu de faire planter le site.
+function chargerTransactions() {
+  const donneesSauvegardees = localStorage.getItem("studwallet_transactions");
+
+  if (donneesSauvegardees === null) {
+    return [];
+  }
+
+  try {
+    const tableau = JSON.parse(donneesSauvegardees);
+    if (Array.isArray(tableau)) {
+      return tableau;
+    }
+    return [];
+  } catch (erreur) {
+    return [];
+  }
+}
+
+// Enregistre les transactions dans le navigateur
+function sauvegarder() {
+  localStorage.setItem("studwallet_transactions", JSON.stringify(transactions));
+}
+
+//  TRI PAR DATE 
+
+// Trie les transactions de la plus récente à la plus ancienne.
+// Si deux transactions ont la même date, la dernière ajoutée passe en premier.
+function trierParDate() {
+  transactions.sort(function (a, b) {
+    if (a.date < b.date) {
+      return 1;
+    }
+    if (a.date > b.date) {
+      return -1;
+    }
+    return b.id - a.id;
+  });
+}
+
+// AFFICHAGE DE LA LISTE ET CALCULS 
 
 function mettreAJourAffichage() {
   // A. Vider la liste actuelle
@@ -55,7 +111,7 @@ function mettreAJourAffichage() {
     messageVide.style.display = "none";
   }
 
-  // C. Récupérer le mois et l'année actuels pour les calculs de synthèse
+  // C. Récupérer le mois et l'année actuels pour la synthèse du mois
   const dateAujourdhui = new Date();
   const moisActuel = (dateAujourdhui.getMonth() + 1).toString().padStart(2, "0");
   const anneeActuelle = dateAujourdhui.getFullYear().toString();
@@ -64,31 +120,31 @@ function mettreAJourAffichage() {
   let totalRevenusMois = 0;
   let totalDepensesMois = 0;
 
-  // D. Parcourir chaque transaction avec une boucle for classique
+  // D. Parcourir chaque transaction
   for (let i = 0; i < transactions.length; i = i + 1) {
     const item = transactions[i];
 
     // 1. Calcul du solde global
     if (item.type === "revenu") {
-      totalSolde = totalSolde + item.montant;
+      totalSolde = arrondirMontant(totalSolde + item.montant);
     } else {
-      totalSolde = totalSolde - item.montant;
+      totalSolde = arrondirMontant(totalSolde - item.montant);
     }
 
     // 2. Calcul des totaux du mois en cours
     const partiesDate = item.date.split("-");
-    const anneeTransac = partiesDate[0];
-    const moisTransac = partiesDate[1];
+    const anneeTransaction = partiesDate[0];
+    const moisTransaction = partiesDate[1];
 
-    if (anneeTransac === anneeActuelle && moisTransac === moisActuel) {
+    if (anneeTransaction === anneeActuelle && moisTransaction === moisActuel) {
       if (item.type === "revenu") {
-        totalRevenusMois = totalRevenusMois + item.montant;
+        totalRevenusMois = arrondirMontant(totalRevenusMois + item.montant);
       } else {
-        totalDepensesMois = totalDepensesMois + item.montant;
+        totalDepensesMois = arrondirMontant(totalDepensesMois + item.montant);
       }
     }
 
-    // 3. Création de l’élément HTML <li> pour la liste
+    // 3. Création de l'élément <li> de la liste
     const li = document.createElement("li");
 
     let classeCouleur = "montant-depense";
@@ -100,16 +156,14 @@ function mettreAJourAffichage() {
 
     li.innerHTML = `
       <div>
-        <strong>${item.libelle}</strong>
-        <small style="display: block; color: var(--gris); text-transform: capitalize;">
-          ${item.categorie} • ${formaterDate(item.date)}
+        <strong>${nettoyerTexte(item.libelle)}</strong>
+        <small class="details-transaction">
+          ${nettoyerTexte(item.categorie)} • ${formaterDate(item.date)}
         </small>
       </div>
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <span class="${classeCouleur}">
-          ${signe} ${formaterPrix(item.montant)}
-        </span>
-        <button class="bouton-supprimer" onclick="supprimerTransaction(${item.id})" title="Supprimer">
+      <div class="actions-transaction">
+        <span class="${classeCouleur}">${signe} ${formaterPrix(item.montant)}</span>
+        <button class="bouton-supprimer" onclick="supprimerTransaction(${item.id})" title="Supprimer" aria-label="Supprimer la transaction">
           🗑
         </button>
       </div>
@@ -118,16 +172,25 @@ function mettreAJourAffichage() {
     listeTransactions.appendChild(li);
   }
 
-  // E. Mettre à jour les textes des cartes d'affichage
+  // E. Mettre à jour les cartes du haut
   soldeElement.textContent = formaterPrix(totalSolde);
   revenusMoisElement.textContent = "+ " + formaterPrix(totalRevenusMois);
   depensesMoisElement.textContent = "- " + formaterPrix(totalDepensesMois);
 }
 
-// ===== 5. AJOUT D'UNE TRANSACTION =====
+// AJOUT D'UNE TRANSACTION 
 
 formulaire.addEventListener("submit", function (evenement) {
   evenement.preventDefault();
+
+  // On enlève les espaces au début et à la fin du libellé
+  const libelleNettoye = libelleInput.value.trim();
+
+  // Un libellé fait uniquement d'espaces n'est pas accepté
+  if (libelleNettoye === "") {
+    alert("Merci d'écrire un libellé.");
+    return;
+  }
 
   // On récupère quel bouton radio est coché
   const typeCoche = document.querySelector('input[name="type"]:checked').value;
@@ -135,30 +198,32 @@ formulaire.addEventListener("submit", function (evenement) {
   // Création de la transaction
   const nouvelleTransaction = {
     id: Date.now(),
-    montant: parseFloat(montantInput.value),
+    montant: arrondirMontant(parseFloat(montantInput.value)),
     categorie: categorieInput.value,
     date: dateInput.value,
-    libelle: libelleInput.value,
+    libelle: libelleNettoye,
     type: typeCoche
   };
 
-  // On l'ajoute au début du tableau avec unshift (comme ça les plus récentes sont en haut)
-  transactions.unshift(nouvelleTransaction);
-
-  // Sauvegarde et mise à jour
+  // Ajout, tri par date, sauvegarde
+  transactions.push(nouvelleTransaction);
+  trierParDate();
   sauvegarder();
+
+  // On remet le formulaire à zéro (dépense et date du jour par défaut)
   formulaire.reset();
   document.querySelector('input[name="type"][value="depense"]').checked = true;
+  dateInput.value = obtenirDateDuJour();
 
   mettreAJourAffichage();
 });
 
-// ===== 6. SUPPRESSION D'UNE TRANSACTION =====
+// SUPPRESSION D'UNE TRANSACTION
 
 function supprimerTransaction(id) {
-  let nouveauTableau = [];
+  const nouveauTableau = [];
 
-  // On conserve uniquement les transactions qui n'ont pas l'id supprimé
+  // On garde uniquement les transactions qui n'ont pas l'id supprimé
   for (let i = 0; i < transactions.length; i = i + 1) {
     if (transactions[i].id !== id) {
       nouveauTableau.push(transactions[i]);
@@ -170,5 +235,8 @@ function supprimerTransaction(id) {
   mettreAJourAffichage();
 }
 
-// ===== 7. LANCEMENT AU CHARGEMENT DE LA PAGE =====
+// LANCEMENT AU CHARGEMENT DE LA PAGE
+transactions = chargerTransactions();
+trierParDate();
+dateInput.value = obtenirDateDuJour();
 mettreAJourAffichage();

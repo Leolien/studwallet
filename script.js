@@ -52,3 +52,91 @@ formulaire.addEventListener("submit", function (e) {
   // Mise à jour de l'affichage (fonction qu'on va écrire à l'étape suivante)
   mettreAJourAffichage();
 });
+
+// ===== 4. AFFICHAGE ET CALCULS =====
+
+function mettreAJourAffichage() {
+  // --- A. Affichage du message vide ou de la liste ---
+  if (transactions.length === 0) {
+    messageVide.style.display = "block";
+    listeTransactions.innerHTML = "";
+  } else {
+    messageVide.style.display = "none";
+    listeTransactions.innerHTML = "";
+
+    // On parcourt les transactions (de la plus récente à la plus ancienne)
+    [...transactions].reverse().forEach((item) => {
+      const li = document.createElement("li");
+
+      const dateFormatee = new Date(item.date).toLocaleDateString("fr-FR");
+      const classeMontant = item.type === "revenu" ? "montant-revenu" : "montant-depense";
+      const signe = item.type === "revenu" ? "+" : "-";
+
+      li.innerHTML = `
+        <div>
+          <strong>${item.libelle}</strong>
+          <small style="display: block; color: var(--gris); text-transform: capitalize;">
+            ${item.categorie} • ${dateFormatee}
+          </small>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="${classeMontant}">
+            ${signe} ${item.montant.toFixed(2).replace(".", ",")} €
+          </span>
+          <button 
+            type="button" 
+            onclick="supprimerTransaction(${item.id})" 
+            style="background: none; border: none; color: var(--rouge); cursor: pointer; font-size: 16px;" 
+            title="Supprimer">
+            🗑️️
+          </button>
+        </div>
+      `;
+
+      listeTransactions.appendChild(li);
+    });
+  }
+
+  // --- B. Calculs (Solde, Revenus du mois, Dépenses du mois) ---
+  const dateActuelle = new Date();
+  const moisActuel = dateActuelle.getMonth();
+  const anneeActuelle = dateActuelle.getFullYear();
+
+  let totalSolde = 0;
+  let totalRevenusMois = 0;
+  let totalDepensesMois = 0;
+
+  transactions.forEach((item) => {
+    // Calcul du solde global
+    if (item.type === "revenu") {
+      totalSolde += item.montant;
+    } else {
+      totalSolde -= item.montant;
+    }
+
+    // Calcul de la synthèse du mois
+    const dateTransac = new Date(item.date);
+    if (dateTransac.getMonth() === moisActuel && dateTransac.getFullYear() === anneeActuelle) {
+      if (item.type === "revenu") {
+        totalRevenusMois += item.montant;
+      } else {
+        totalDepensesMois += item.montant;
+      }
+    }
+  });
+
+  // Mise à jour des textes HTML
+  soldeElement.textContent = `${totalSolde.toFixed(2).replace(".", ",")} €`;
+  revenusMoisElement.textContent = `+ ${totalRevenusMois.toFixed(2).replace(".", ",")} €`;
+  depensesMoisElement.textContent = `- ${totalDepensesMois.toFixed(2).replace(".", ",")} €`;
+}
+
+// ===== 5. SUPPRESSION D'UNE TRANSACTION =====
+function supprimerTransaction(id) {
+  transactions = transactions.filter((t) => t.id !== id);
+  sauvegarder();
+  mettreAJourAffichage();
+}
+
+// ===== 6. CHARGEMENT INITIAL =====
+mettreAJourAffichage();

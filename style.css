@@ -1,4 +1,4 @@
-
+/* COULEURS  */
 :root {
   --vert: #34D399;
   --vert-clair: #D1FAE5;
@@ -11,7 +11,7 @@
   --bordure: #E5E7EB;
 }
 
-/* ===== 2. BASE ===== */
+/* BASE  */
 * {
   box-sizing: border-box;
 }
@@ -44,7 +44,7 @@ p {
   margin: 0;
 }
 
-/* ===== 3. MISE EN PAGE ===== */
+/* MISE EN PAGE */
 .layout {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -64,7 +64,7 @@ p {
   align-self: start;
 }
 
-/* ===== 4. CARTES ===== */
+/* CARTES */
 .carte {
   background-color: white;
   border: 1px solid var(--bordure);
@@ -100,7 +100,7 @@ p {
 #revenus-mois { color: var(--vert-texte); }
 #depenses-mois { color: var(--rouge); }
 
-/* ===== 5. LISTE DES TRANSACTIONS ===== */
+/* LISTE DES TRANSACTIONS*/
 #message-vide {
   color: var(--gris);
 }
@@ -117,6 +117,20 @@ p {
   align-items: center;
   padding: 12px 0;
   border-bottom: 1px solid var(--bordure);
+}
+
+/* Catégorie et date sous le libellé  */
+.details-transaction {
+  display: block;
+  color: var(--gris);
+  text-transform: capitalize;
+}
+
+/* Montant et bouton poubelle à droite */
+.actions-transaction {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .montant-revenu {
@@ -137,7 +151,7 @@ p {
   font-size: 16px;
 }
 
-/* ===== 6. FORMULAIRE ===== */
+/* FORMULAIRE */
 label {
   display: block;
   margin-top: 14px;
@@ -216,7 +230,7 @@ button[type="submit"] {
   cursor: pointer;
 }
 
-/* Responsive mobile */
+/* MOBILE */
 @media (max-width: 800px) {
   .layout,
   .synthese {

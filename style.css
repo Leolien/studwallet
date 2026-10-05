@@ -1,4 +1,4 @@
-/* ===== Variables de couleur ===== */
+
 :root {
   --vert: #34D399;
   --vert-clair: #D1FAE5;
@@ -11,7 +11,7 @@
   --bordure: #E5E7EB;
 }
 
-/* ===== Base ===== */
+/* ===== 2. BASE ===== */
 * {
   box-sizing: border-box;
 }
@@ -20,7 +20,7 @@ body {
   margin: 0;
   background-color: var(--fond);
   color: var(--texte);
-  font-family: "Nunito", "Segoe UI", Arial, sans-serif;
+  font-family: "Nunito", Arial, sans-serif;
 }
 
 header {
@@ -44,7 +44,7 @@ p {
   margin: 0;
 }
 
-/* ===== Mise en page à deux colonnes ===== */
+/* ===== 3. MISE EN PAGE ===== */
 .layout {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -64,7 +64,7 @@ p {
   align-self: start;
 }
 
-/* ===== Cartes ===== */
+/* ===== 4. CARTES ===== */
 .carte {
   background-color: white;
   border: 1px solid var(--bordure);
@@ -78,7 +78,6 @@ p {
   gap: 16px;
 }
 
-/* ===== Solde ===== */
 .carte-solde {
   background-color: var(--vert-clair);
   border-color: var(--vert-clair);
@@ -91,7 +90,6 @@ p {
   font-weight: bold;
 }
 
-/* ===== Revenus et dépenses du mois ===== */
 #revenus-mois,
 #depenses-mois {
   margin-top: 8px;
@@ -99,15 +97,10 @@ p {
   font-weight: bold;
 }
 
-#revenus-mois {
-  color: var(--vert-texte);
-}
+#revenus-mois { color: var(--vert-texte); }
+#depenses-mois { color: var(--rouge); }
 
-#depenses-mois {
-  color: var(--rouge);
-}
-
-/* ===== Liste des transactions ===== */
+/* ===== 5. LISTE DES TRANSACTIONS ===== */
 #message-vide {
   color: var(--gris);
 }
@@ -122,7 +115,6 @@ p {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
   padding: 12px 0;
   border-bottom: 1px solid var(--bordure);
 }
@@ -137,7 +129,15 @@ p {
   font-weight: bold;
 }
 
-/* ===== Formulaire ===== */
+.bouton-supprimer {
+  background: none;
+  border: none;
+  color: var(--rouge);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* ===== 6. FORMULAIRE ===== */
 label {
   display: block;
   margin-top: 14px;
@@ -163,7 +163,7 @@ select:focus {
   outline: 2px solid var(--vert);
 }
 
-/* ===== Toggle Revenu / Dépense ===== */
+/* Boutons radio Revenu / Dépense */
 .toggle-type {
   display: flex;
   gap: 10px;
@@ -175,7 +175,6 @@ select:focus {
   margin: 0;
 }
 
-/* On cache le rond du bouton radio, seul le texte reste visible */
 .toggle-type input {
   display: none;
 }
@@ -192,7 +191,6 @@ select:focus {
   cursor: pointer;
 }
 
-/* Quand le bouton est coché : vert pour Revenu, rouge pour Dépense */
 .toggle-type input[value="revenu"]:checked + span {
   background-color: var(--vert);
   border-color: var(--vert);
@@ -205,7 +203,6 @@ select:focus {
   color: white;
 }
 
-/* ===== Bouton Ajouter ===== */
 button[type="submit"] {
   width: 100%;
   margin-top: 16px;
@@ -216,20 +213,12 @@ button[type="submit"] {
   color: white;
   font-size: 16px;
   font-weight: bold;
-  font-family: inherit;
   cursor: pointer;
 }
 
-button[type="submit"]:hover {
-  background-color: #172554;
-}
-
-/* ===== Petits écrans : une seule colonne ===== */
+/* Responsive mobile */
 @media (max-width: 800px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-
+  .layout,
   .synthese {
     grid-template-columns: 1fr;
   }

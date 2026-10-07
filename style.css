@@ -23,6 +23,11 @@ body {
   font-family: "Nunito", Arial, sans-serif;
 }
 
+/* Cache un élément (utilisé pour les vues et la navigation) */
+.masque {
+  display: none !important;
+}
+
 header {
   max-width: 1200px;
   margin: 0 auto;
@@ -44,6 +49,50 @@ p {
   margin: 0;
 }
 
+/* BARRE DE NAVIGATION */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 20px 0;
+}
+
+.onglets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+nav button {
+  padding: 8px 16px;
+  border: 1px solid var(--bordure);
+  border-radius: 999px;
+  background-color: white;
+  color: var(--gris);
+  font-size: 14px;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+nav button:hover {
+  border-color: var(--vert);
+  color: var(--vert-texte);
+}
+
+#btn-deconnexion {
+  color: var(--rouge);
+}
+
+#btn-deconnexion:hover {
+  border-color: var(--rouge);
+  color: var(--rouge);
+}
+
 /* MISE EN PAGE */
 .layout {
   display: grid;
@@ -62,6 +111,22 @@ p {
 
 .colonne-formulaire {
   align-self: start;
+}
+
+/* Vues simples : connexion, plafonds, graphiques */
+.vue {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* La connexion est une carte étroite, centrée */
+#vue-auth {
+  max-width: 490px;
+  margin: 40px auto 0;
 }
 
 /* CARTES */
@@ -163,6 +228,8 @@ label {
 input[type="number"],
 input[type="date"],
 input[type="text"],
+input[type="email"],
+input[type="password"],
 select {
   width: 100%;
   padding: 10px;
@@ -228,6 +295,47 @@ button[type="submit"] {
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
+}
+
+/* CONNEXION : deux boutons côte à côte */
+.boutons-auth {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.boutons-auth button {
+  flex: 1;
+  margin-top: 0;
+}
+
+/* "S'inscrire" : même forme que "Se connecter", fond blanc */
+#btn-inscription {
+  padding: 12px;
+  border: 1px solid var(--bleu-fonce);
+  border-radius: 999px;
+  background-color: white;
+  color: var(--bleu-fonce);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Messages d'erreur de la connexion */
+#message-auth {
+  margin-top: 12px;
+  color: var(--rouge);
+  font-size: 14px;
+}
+
+/* PLAFONDS ET GRAPHIQUES */
+#liste-plafonds-contenu {
+  color: var(--gris);
+}
+
+canvas {
+  max-width: 100%;
+  max-height: 400px;
 }
 
 /* MOBILE */

@@ -6,6 +6,9 @@
   <title>StudWallet</title>
 
   <link rel="stylesheet" href="style.css">
+
+  <!-- Chart.js (pour les graphiques) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -15,49 +18,126 @@
     <h1>StudWallet (develop)</h1>
   </header>
 
-  <!-- Zone principale du site -->
-  <main class="layout">
+  <!-- Barre de navigation : 3 onglets + déconnexion -->
+  <!-- Les fonctions afficherVue() et deconnexion() seront écrites dans script.js (tâches 3 et 4) -->
+  <nav id="barre-navigation">
+    <div class="onglets">
+      <button type="button" onclick="afficherVue('vue-budget')">Budget</button>
+      <button type="button" onclick="afficherVue('vue-plafonds')">Plafonds &amp; Score</button>
+      <button type="button" onclick="afficherVue('vue-graphiques')">Répartition</button>
+    </div>
+    <button type="button" id="btn-deconnexion" onclick="deconnexion()">Déconnexion</button>
+  </nav>
 
-    <!-- Colonne de gauche : solde, synthèse et liste des transactions -->
-    <section class="colonne-principale">
+  <main>
 
-      <!-- Carte du solde global -->
-      <div class="carte carte-solde">
-        <p>Solde actuel</p>
-        <p id="solde">0,00 €</p>
-      </div>
+    <!-- ===== VUE CONNEXION / INSCRIPTION ===== -->
+    <!-- TEMPORAIRE : masquée tant que l'authentification n'est pas faite (tâche 4).
+         Léo la rendra visible à l'ouverture du site et masquera les autres vues. -->
+    <section id="vue-auth" class="vue masque">
+      <form id="form-auth" class="carte">
+        <h2>Connexion</h2>
 
-      <!-- Cartes de synthèse du mois en cours -->
-      <div class="synthese">
-        <div class="carte">
-          <p>Revenus ce mois</p>
-          <p id="revenus-mois">+ 0,00 €</p>
+        <label for="email">Adresse e-mail</label>
+        <input type="email" id="email" placeholder="exemple@email.com" required>
+
+        <label for="mot-de-passe">Mot de passe</label>
+        <input type="password" id="mot-de-passe" placeholder="Votre mot de passe" required>
+
+        <div class="boutons-auth">
+          <button type="submit" id="btn-connexion">Se connecter</button>
+          <button type="button" id="btn-inscription">S'inscrire</button>
         </div>
-        <div class="carte">
-          <p>Dépenses ce mois</p>
-          <p id="depenses-mois">- 0,00 €</p>
+
+        <!-- Messages d'erreur de connexion (mot de passe trop court, mauvais identifiants...) -->
+        <p id="message-auth"></p>
+      </form>
+    </section>
+
+    <!-- ===== VUE BUDGET (le MVP) ===== -->
+    <section id="vue-budget" class="layout">
+
+      <!-- Colonne de gauche : solde, synthèse et liste des transactions -->
+      <div class="colonne-principale">
+
+        <!-- Carte du solde global -->
+        <div class="carte carte-solde">
+          <p>Solde actuel</p>
+          <p id="solde">0,00 €</p>
         </div>
+
+        <!-- Cartes de synthèse du mois en cours -->
+        <div class="synthese">
+          <div class="carte">
+            <p>Revenus ce mois</p>
+            <p id="revenus-mois">+ 0,00 €</p>
+          </div>
+          <div class="carte">
+            <p>Dépenses ce mois</p>
+            <p id="depenses-mois">- 0,00 €</p>
+          </div>
+        </div>
+
+        <!-- Liste des transactions -->
+        <div class="carte">
+          <h2>Transactions</h2>
+          <p id="message-vide">Aucune transaction pour le moment.</p>
+          <ul id="liste-transactions"></ul>
+        </div>
+
       </div>
 
-      <!-- Liste des transactions -->
-      <div class="carte">
-        <h2>Transactions</h2>
-        <p id="message-vide">Aucune transaction pour le moment.</p>
-        <ul id="liste-transactions"></ul>
-      </div>
+      <!-- Colonne de droite : formulaire d'ajout -->
+      <aside class="colonne-formulaire">
+        <form id="formulaire" class="carte">
+          <h2>Ajouter une transaction</h2>
+
+          <label for="montant">Montant (€)</label>
+          <input type="number" id="montant" min="0.01" step="0.01" placeholder="0,00" required>
+
+          <label for="categorie">Catégorie</label>
+          <select id="categorie" required>
+            <option value="">Sélectionner...</option>
+            <option value="loyer">Loyer</option>
+            <option value="courses">Courses</option>
+            <option value="transport">Transport</option>
+            <option value="loisirs">Loisirs</option>
+            <option value="abonnements">Abonnements</option>
+            <option value="autres">Autres</option>
+          </select>
+
+          <label for="date">Date</label>
+          <input type="date" id="date" required>
+
+          <label for="libelle">Libellé</label>
+          <input type="text" id="libelle" placeholder="Ex. : courses de la semaine" required>
+
+          <!-- Choix Revenu / Dépense -->
+          <div class="toggle-type">
+            <label>
+              <input type="radio" name="type" value="revenu">
+              <span>Revenu</span>
+            </label>
+            <label>
+              <input type="radio" name="type" value="depense" checked>
+              <span>Dépense</span>
+            </label>
+          </div>
+
+          <button type="submit">Ajouter</button>
+        </form>
+      </aside>
 
     </section>
 
-    <!-- Colonne de droite : formulaire d'ajout -->
-    <aside class="colonne-formulaire">
-      <form id="formulaire" class="carte">
-        <h2>Ajouter une transaction</h2>
+    <!-- ===== VUE PLAFONDS & SCORE ===== -->
+    <section id="vue-plafonds" class="vue masque">
 
-        <label for="montant">Montant (€)</label>
-        <input type="number" id="montant" min="0.01" step="0.01" placeholder="0,00" required>
+      <form id="form-plafonds" class="carte">
+        <h2>Définir un plafond</h2>
 
-        <label for="categorie">Catégorie</label>
-        <select id="categorie" required>
+        <label for="plafond-categorie">Catégorie</label>
+        <select id="plafond-categorie" required>
           <option value="">Sélectionner...</option>
           <option value="loyer">Loyer</option>
           <option value="courses">Courses</option>
@@ -67,27 +147,38 @@
           <option value="autres">Autres</option>
         </select>
 
-        <label for="date">Date</label>
-        <input type="date" id="date" required>
+        <label for="plafond-semaine">Plafond par semaine (€)</label>
+        <input type="number" id="plafond-semaine" min="0" step="0.01" placeholder="Ex. : 50">
 
-        <label for="libelle">Libellé</label>
-        <input type="text" id="libelle" placeholder="Ex. : courses de la semaine" required>
+        <label for="plafond-mois">Plafond par mois (€)</label>
+        <input type="number" id="plafond-mois" min="0" step="0.01" placeholder="Ex. : 200">
 
-        <!-- Choix Revenu / Dépense -->
-        <div class="toggle-type">
-          <label>
-            <input type="radio" name="type" value="revenu">
-            <span>Revenu</span>
-          </label>
-          <label>
-            <input type="radio" name="type" value="depense" checked>
-            <span>Dépense</span>
-          </label>
-        </div>
-
-        <button type="submit">Ajouter</button>
+        <button type="submit">Enregistrer le plafond</button>
       </form>
-    </aside>
+
+      <div class="carte">
+        <h2>Plafonds actuels</h2>
+        <div id="liste-plafonds-contenu">
+          <!-- Les plafonds seront affichés ici avec JavaScript (tâche 6) -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===== VUE RÉPARTITION (GRAPHIQUES) ===== -->
+    <section id="vue-graphiques" class="vue masque">
+
+      <div class="carte">
+        <h2>Dépenses du mois par catégorie</h2>
+        <canvas id="graphique-reel"></canvas>
+      </div>
+
+      <div class="carte">
+        <h2>Répartition visée (plafonds)</h2>
+        <canvas id="graphique-theorique"></canvas>
+      </div>
+
+    </section>
 
   </main>
 

@@ -1,3 +1,6 @@
+--Cette base ne sert que de copie--
+
+
 -- Table des transactions
 create table transactions (
   id bigint generated always as identity primary key,

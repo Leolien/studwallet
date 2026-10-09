@@ -84,6 +84,13 @@ nav button:hover {
   color: var(--vert-texte);
 }
 
+/* Onglet actif */
+nav button.onglet-actif {
+  background-color: var(--vert-clair);
+  border-color: var(--vert);
+  color: var(--vert-texte);
+}
+
 #btn-deconnexion {
   color: var(--rouge);
 }

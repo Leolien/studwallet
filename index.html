@@ -19,12 +19,12 @@
   </header>
 
   <!-- Barre de navigation : 3 onglets + déconnexion -->
-  <!-- Les fonctions afficherVue() et deconnexion() seront écrites dans script.js (tâches 3 et 4) -->
+  <!-- changerOnglet() est dans script.js. La fonction deconnexion() sera écrite à la tâche 4. -->
   <nav id="barre-navigation">
     <div class="onglets">
-      <button type="button" onclick="afficherVue('vue-budget')">Budget</button>
-      <button type="button" onclick="afficherVue('vue-plafonds')">Plafonds &amp; Score</button>
-      <button type="button" onclick="afficherVue('vue-graphiques')">Répartition</button>
+      <button type="button" class="onglet" aria-controls="vue-budget" aria-selected="false" onclick="changerOnglet('vue-budget')">Budget</button>
+      <button type="button" class="onglet" aria-controls="vue-plafonds" aria-selected="false" onclick="changerOnglet('vue-plafonds')">Plafonds &amp; Score</button>
+      <button type="button" class="onglet" aria-controls="vue-graphiques" aria-selected="false" onclick="changerOnglet('vue-graphiques')">Répartition</button>
     </div>
     <button type="button" id="btn-deconnexion" onclick="deconnexion()">Déconnexion</button>
   </nav>

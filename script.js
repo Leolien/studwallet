@@ -280,8 +280,6 @@ function changerOnglet(nomVue) {
   }
 }
 
-// Au chargement, on affiche l'onglet Budget
-changerOnglet("vue-budget");
 
 
 // AUTHENTIFICATION (tâche 4 : Léo)
@@ -340,4 +338,37 @@ formAuth.addEventListener("submit", function (evenement) {
 // Le bouton "S'inscrire" lance l'inscription
 boutonInscription.addEventListener("click", function () {
   inscrire();
+});
+
+
+// AFFICHAGE SELON LA CONNEXION
+
+// Personne n'est connecté : on montre seulement l'écran de connexion
+function afficherEcranConnexion() {
+  document.getElementById("barre-navigation").classList.add("masque");
+  document.getElementById("vue-budget").classList.add("masque");
+  document.getElementById("vue-plafonds").classList.add("masque");
+  document.getElementById("vue-graphiques").classList.add("masque");
+  document.getElementById("vue-auth").classList.remove("masque");
+
+  // On vide le champ du mot de passe pour la personne suivante
+  motDePasseInput.value = "";
+}
+
+// Quelqu'un est connecté : on cache la connexion et on montre l'application
+function afficherApplication() {
+  document.getElementById("vue-auth").classList.add("masque");
+  document.getElementById("barre-navigation").classList.remove("masque");
+  changerOnglet("vue-budget");
+}
+
+// Supabase prévient le site à chaque changement : ouverture de la page,
+// inscription, connexion ou déconnexion. "session" contient l'utilisateur
+// connecté, ou rien s'il n'y a personne.
+clientSupabase.auth.onAuthStateChange(function (evenement, session) {
+  if (session) {
+    afficherApplication();
+  } else {
+    afficherEcranConnexion();
+  }
 });

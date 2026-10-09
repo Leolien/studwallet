@@ -282,3 +282,62 @@ function changerOnglet(nomVue) {
 
 // Au chargement, on affiche l'onglet Budget
 changerOnglet("vue-budget");
+
+
+// AUTHENTIFICATION (tâche 4 : Léo)
+
+const formAuth = document.getElementById("form-auth");
+const emailInput = document.getElementById("email");
+const motDePasseInput = document.getElementById("mot-de-passe");
+const boutonInscription = document.getElementById("btn-inscription");
+const messageAuth = document.getElementById("message-auth");
+
+// Inscription : crée un nouveau compte avec l'email et le mot de passe saisis.
+// "async" et "await" servent à attendre la réponse de Supabase avant de continuer.
+async function inscrire() {
+  if (emailInput.value === "" || motDePasseInput.value === "") {
+    messageAuth.textContent = "Merci de remplir l'email et le mot de passe.";
+    return;
+  }
+
+  const reponse = await clientSupabase.auth.signUp({
+    email: emailInput.value,
+    password: motDePasseInput.value
+  });
+
+  if (reponse.error) {
+    messageAuth.textContent = "Inscription impossible : " + reponse.error.message;
+  } else {
+    messageAuth.textContent = "";
+  }
+}
+
+// Connexion : vérifie l'email et le mot de passe saisis.
+async function connecter() {
+  const reponse = await clientSupabase.auth.signInWithPassword({
+    email: emailInput.value,
+    password: motDePasseInput.value
+  });
+
+  if (reponse.error) {
+    messageAuth.textContent = "Connexion impossible : " + reponse.error.message;
+  } else {
+    messageAuth.textContent = "";
+  }
+}
+
+// Déconnexion : appelée par le bouton "Déconnexion" de la barre de navigation.
+async function deconnexion() {
+  await clientSupabase.auth.signOut();
+}
+
+// Le formulaire (touche Entrée ou bouton "Se connecter") lance la connexion
+formAuth.addEventListener("submit", function (evenement) {
+  evenement.preventDefault();
+  connecter();
+});
+
+// Le bouton "S'inscrire" lance l'inscription
+boutonInscription.addEventListener("click", function () {
+  inscrire();
+});

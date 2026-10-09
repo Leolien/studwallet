@@ -82,7 +82,7 @@ function sauvegarder() {
   localStorage.setItem("studwallet_transactions", JSON.stringify(transactions));
 }
 
-//  TRI PAR DATE 
+// TRI PAR DATE 
 
 // Trie les transactions de la plus récente à la plus ancienne.
 // Si deux transactions ont la même date, la dernière ajoutée passe en premier.
@@ -240,3 +240,36 @@ transactions = chargerTransactions();
 trierParDate();
 dateInput.value = obtenirDateDuJour();
 mettreAJourAffichage();
+
+// NAVIGATION PAR ONGLETS (tâche 3 : Matthieu)
+
+// Affiche la vue demandée et masque les autres, sans recharger la page.
+// nomVue vaut "vue-budget", "vue-plafonds" ou "vue-graphiques".
+function changerOnglet(nomVue) {
+  const nomsVues = ["vue-budget", "vue-plafonds", "vue-graphiques"];
+
+  // 1. Afficher la vue demandée et masquer les deux autres
+  for (let i = 0; i < nomsVues.length; i = i + 1) {
+    const vue = document.getElementById(nomsVues[i]);
+    if (nomsVues[i] === nomVue) {
+      vue.classList.remove("masque");
+    } else {
+      vue.classList.add("masque");
+    }
+  }
+
+  // 2. Mettre en évidence le bouton de l'onglet actif
+  const onglets = document.querySelectorAll(".onglets .onglet");
+  for (let i = 0; i < onglets.length; i = i + 1) {
+    if (onglets[i].getAttribute("aria-controls") === nomVue) {
+      onglets[i].classList.add("onglet-actif");
+      onglets[i].setAttribute("aria-selected", "true");
+    } else {
+      onglets[i].classList.remove("onglet-actif");
+      onglets[i].setAttribute("aria-selected", "false");
+    }
+  }
+}
+
+// Au chargement, on affiche l'onglet Budget
+changerOnglet("vue-budget");

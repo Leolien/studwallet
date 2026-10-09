@@ -6,33 +6,33 @@ const SUPABASE_CLE = "sb_publishable__xm3IKCaSwoZ-EkPfVVr7Q_fqM1hpQB";
 
 // Le client sert à parler à Supabase (connexion, lecture et écriture des données)
 const clientSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_CLE);
-
+ 
 // SÉLECTION DES ÉLÉMENTS HTML 
 const formulaire = document.getElementById("formulaire");
 const montantInput = document.getElementById("montant");
 const categorieInput = document.getElementById("categorie");
 const dateInput = document.getElementById("date");
 const libelleInput = document.getElementById("libelle");
-
+ 
 const soldeElement = document.getElementById("solde");
 const revenusMoisElement = document.getElementById("revenus-mois");
 const depensesMoisElement = document.getElementById("depenses-mois");
-
+ 
 const listeTransactions = document.getElementById("liste-transactions");
 const messageVide = document.getElementById("message-vide");
-
+ 
 // FONCTIONS UTILES
-
+ 
 // Arrondit un nombre à 2 décimales (évite les erreurs comme 0.1 + 0.2 = 0.30000000000000004)
 function arrondirMontant(montant) {
   return Math.round(montant * 100) / 100;
 }
-
+ 
 // Transforme un nombre en texte avec la virgule (ex : 12.5 -> "12,50 €")
 function formaterPrix(montant) {
   return montant.toFixed(2).replace(".", ",") + " €";
 }
-
+ 
 // Transforme "2026-10-05" en "05/10/2026"
 function formaterDate(dateTexte) {
   const parties = dateTexte.split("-");
@@ -41,7 +41,7 @@ function formaterDate(dateTexte) {
   const jour = parties[2];
   return jour + "/" + mois + "/" + annee;
 }
-
+ 
 // Renvoie la date d'aujourd'hui au format "2026-10-05" (format attendu par le champ date)
 function obtenirDateDuJour() {
   const aujourdhui = new Date();
@@ -50,7 +50,7 @@ function obtenirDateDuJour() {
   const jour = aujourdhui.getDate().toString().padStart(2, "0");
   return annee + "-" + mois + "-" + jour;
 }
-
+ 
 // Remplace les caractères spéciaux du HTML pour qu'un texte tapé par l'utilisateur
 // s'affiche tel quel au lieu d'être interprété comme du code
 function nettoyerTexte(texte) {
@@ -61,20 +61,20 @@ function nettoyerTexte(texte) {
   resultat = resultat.replaceAll('"', "&quot;");
   return resultat;
 }
-
+ 
 // CHARGEMENT ET SAUVEGARDE (localStorage) 
-
+ 
 let transactions = [];
-
+ 
 // Lit les transactions enregistrées. Si les données sont absentes ou abîmées,
 // on repart avec une liste vide au lieu de faire planter le site.
 function chargerTransactions() {
   const donneesSauvegardees = localStorage.getItem("studwallet_transactions");
-
+ 
   if (donneesSauvegardees === null) {
     return [];
   }
-
+ 
   try {
     const tableau = JSON.parse(donneesSauvegardees);
     if (Array.isArray(tableau)) {
@@ -85,14 +85,14 @@ function chargerTransactions() {
     return [];
   }
 }
-
+ 
 // Enregistre les transactions dans le navigateur
 function sauvegarder() {
   localStorage.setItem("studwallet_transactions", JSON.stringify(transactions));
 }
-
+ 
 // TRI PAR DATE 
-
+ 
 // Trie les transactions de la plus récente à la plus ancienne.
 // Si deux transactions ont la même date, la dernière ajoutée passe en premier.
 function trierParDate() {
@@ -106,45 +106,45 @@ function trierParDate() {
     return b.id - a.id;
   });
 }
-
+ 
 // AFFICHAGE DE LA LISTE ET CALCULS 
-
+ 
 function mettreAJourAffichage() {
   // A. Vider la liste actuelle
   listeTransactions.innerHTML = "";
-
+ 
   // B. Afficher ou masquer le message "Aucune transaction"
   if (transactions.length === 0) {
     messageVide.style.display = "block";
   } else {
     messageVide.style.display = "none";
   }
-
+ 
   // C. Récupérer le mois et l'année actuels pour la synthèse du mois
   const dateAujourdhui = new Date();
   const moisActuel = (dateAujourdhui.getMonth() + 1).toString().padStart(2, "0");
   const anneeActuelle = dateAujourdhui.getFullYear().toString();
-
+ 
   let totalSolde = 0;
   let totalRevenusMois = 0;
   let totalDepensesMois = 0;
-
+ 
   // D. Parcourir chaque transaction
   for (let i = 0; i < transactions.length; i = i + 1) {
     const item = transactions[i];
-
+ 
     // 1. Calcul du solde global
     if (item.type === "revenu") {
       totalSolde = arrondirMontant(totalSolde + item.montant);
     } else {
       totalSolde = arrondirMontant(totalSolde - item.montant);
     }
-
+ 
     // 2. Calcul des totaux du mois en cours
     const partiesDate = item.date.split("-");
     const anneeTransaction = partiesDate[0];
     const moisTransaction = partiesDate[1];
-
+ 
     if (anneeTransaction === anneeActuelle && moisTransaction === moisActuel) {
       if (item.type === "revenu") {
         totalRevenusMois = arrondirMontant(totalRevenusMois + item.montant);
@@ -152,17 +152,17 @@ function mettreAJourAffichage() {
         totalDepensesMois = arrondirMontant(totalDepensesMois + item.montant);
       }
     }
-
+ 
     // 3. Création de l'élément <li> de la liste
     const li = document.createElement("li");
-
+ 
     let classeCouleur = "montant-depense";
     let signe = "-";
     if (item.type === "revenu") {
       classeCouleur = "montant-revenu";
       signe = "+";
     }
-
+ 
     li.innerHTML = `
       <div>
         <strong>${nettoyerTexte(item.libelle)}</strong>
@@ -177,33 +177,33 @@ function mettreAJourAffichage() {
         </button>
       </div>
     `;
-
+ 
     listeTransactions.appendChild(li);
   }
-
+ 
   // E. Mettre à jour les cartes du haut
   soldeElement.textContent = formaterPrix(totalSolde);
   revenusMoisElement.textContent = "+ " + formaterPrix(totalRevenusMois);
   depensesMoisElement.textContent = "- " + formaterPrix(totalDepensesMois);
 }
-
+ 
 // AJOUT D'UNE TRANSACTION 
-
+ 
 formulaire.addEventListener("submit", function (evenement) {
   evenement.preventDefault();
-
+ 
   // On enlève les espaces au début et à la fin du libellé
   const libelleNettoye = libelleInput.value.trim();
-
+ 
   // Un libellé fait uniquement d'espaces n'est pas accepté
   if (libelleNettoye === "") {
     alert("Merci d'écrire un libellé.");
     return;
   }
-
+ 
   // On récupère quel bouton radio est coché
   const typeCoche = document.querySelector('input[name="type"]:checked').value;
-
+ 
   // Création de la transaction
   const nouvelleTransaction = {
     id: Date.now(),
@@ -213,50 +213,50 @@ formulaire.addEventListener("submit", function (evenement) {
     libelle: libelleNettoye,
     type: typeCoche
   };
-
+ 
   // Ajout, tri par date, sauvegarde
   transactions.push(nouvelleTransaction);
   trierParDate();
   sauvegarder();
-
+ 
   // On remet le formulaire à zéro (dépense et date du jour par défaut)
   formulaire.reset();
   document.querySelector('input[name="type"][value="depense"]').checked = true;
   dateInput.value = obtenirDateDuJour();
-
+ 
   mettreAJourAffichage();
 });
-
+ 
 // SUPPRESSION D'UNE TRANSACTION
-
+ 
 function supprimerTransaction(id) {
   const nouveauTableau = [];
-
+ 
   // On garde uniquement les transactions qui n'ont pas l'id supprimé
   for (let i = 0; i < transactions.length; i = i + 1) {
     if (transactions[i].id !== id) {
       nouveauTableau.push(transactions[i]);
     }
   }
-
+ 
   transactions = nouveauTableau;
   sauvegarder();
   mettreAJourAffichage();
 }
-
+ 
 // LANCEMENT AU CHARGEMENT DE LA PAGE
 transactions = chargerTransactions();
 trierParDate();
 dateInput.value = obtenirDateDuJour();
 mettreAJourAffichage();
-
+ 
 // NAVIGATION PAR ONGLETS (tâche 3 : Matthieu)
-
+ 
 // Affiche la vue demandée et masque les autres, sans recharger la page.
 // nomVue vaut "vue-budget", "vue-plafonds" ou "vue-graphiques".
 function changerOnglet(nomVue) {
   const nomsVues = ["vue-budget", "vue-plafonds", "vue-graphiques"];
-
+ 
   // 1. Afficher la vue demandée et masquer les deux autres
   for (let i = 0; i < nomsVues.length; i = i + 1) {
     const vue = document.getElementById(nomsVues[i]);
@@ -266,7 +266,7 @@ function changerOnglet(nomVue) {
       vue.classList.add("masque");
     }
   }
-
+ 
   // 2. Mettre en évidence le bouton de l'onglet actif
   const onglets = document.querySelectorAll(".onglets .onglet");
   for (let i = 0; i < onglets.length; i = i + 1) {
@@ -279,17 +279,40 @@ function changerOnglet(nomVue) {
     }
   }
 }
-
-
-
+ 
 // AUTHENTIFICATION (tâche 4 : Léo)
-
+ 
 const formAuth = document.getElementById("form-auth");
 const emailInput = document.getElementById("email");
 const motDePasseInput = document.getElementById("mot-de-passe");
 const boutonInscription = document.getElementById("btn-inscription");
 const messageAuth = document.getElementById("message-auth");
-
+ 
+// Transforme une erreur de Supabase (en anglais) en message français pour l'utilisateur
+function traduireErreurAuth(erreur) {
+  const code = erreur.code;
+  const message = erreur.message;
+ 
+  if (code === "invalid_credentials" || message === "Invalid login credentials") {
+    return "Email ou mot de passe incorrect.";
+  }
+  if (code === "user_already_exists" || message === "User already registered") {
+    return "Un compte existe déjà avec cet email. Cliquez sur « Se connecter ».";
+  }
+  if (code === "weak_password") {
+    return "Mot de passe trop faible : il faut au moins 6 caractères.";
+  }
+  if (code === "email_address_invalid") {
+    return "Cette adresse email n'est pas valide.";
+  }
+  if (code === "over_request_rate_limit" || code === "over_email_send_rate_limit") {
+    return "Trop de tentatives. Patientez quelques minutes puis réessayez.";
+  }
+ 
+  // Tout autre cas
+  return "Une erreur est survenue. Vérifiez votre connexion et réessayez.";
+}
+ 
 // Inscription : crée un nouveau compte avec l'email et le mot de passe saisis.
 // "async" et "await" servent à attendre la réponse de Supabase avant de continuer.
 async function inscrire() {
@@ -297,52 +320,51 @@ async function inscrire() {
     messageAuth.textContent = "Merci de remplir l'email et le mot de passe.";
     return;
   }
-
+ 
   const reponse = await clientSupabase.auth.signUp({
     email: emailInput.value,
     password: motDePasseInput.value
   });
-
+ 
   if (reponse.error) {
-    messageAuth.textContent = "Inscription impossible : " + reponse.error.message;
+    messageAuth.textContent = traduireErreurAuth(reponse.error);
   } else {
     messageAuth.textContent = "";
   }
 }
-
+ 
 // Connexion : vérifie l'email et le mot de passe saisis.
 async function connecter() {
   const reponse = await clientSupabase.auth.signInWithPassword({
     email: emailInput.value,
     password: motDePasseInput.value
   });
-
+ 
   if (reponse.error) {
-    messageAuth.textContent = "Connexion impossible : " + reponse.error.message;
+    messageAuth.textContent = traduireErreurAuth(reponse.error);
   } else {
     messageAuth.textContent = "";
   }
 }
-
+ 
 // Déconnexion : appelée par le bouton "Déconnexion" de la barre de navigation.
 async function deconnexion() {
   await clientSupabase.auth.signOut();
 }
-
+ 
 // Le formulaire (touche Entrée ou bouton "Se connecter") lance la connexion
 formAuth.addEventListener("submit", function (evenement) {
   evenement.preventDefault();
   connecter();
 });
-
+ 
 // Le bouton "S'inscrire" lance l'inscription
 boutonInscription.addEventListener("click", function () {
   inscrire();
 });
-
-
+ 
 // AFFICHAGE SELON LA CONNEXION
-
+ 
 // Personne n'est connecté : on montre seulement l'écran de connexion
 function afficherEcranConnexion() {
   document.getElementById("barre-navigation").classList.add("masque");
@@ -350,18 +372,20 @@ function afficherEcranConnexion() {
   document.getElementById("vue-plafonds").classList.add("masque");
   document.getElementById("vue-graphiques").classList.add("masque");
   document.getElementById("vue-auth").classList.remove("masque");
-
-  // On vide le champ du mot de passe pour la personne suivante
+ 
+  // On vide les champs et le message pour la personne suivante
+  emailInput.value = "";
   motDePasseInput.value = "";
+  messageAuth.textContent = "";
 }
-
+ 
 // Quelqu'un est connecté : on cache la connexion et on montre l'application
 function afficherApplication() {
   document.getElementById("vue-auth").classList.add("masque");
   document.getElementById("barre-navigation").classList.remove("masque");
   changerOnglet("vue-budget");
 }
-
+ 
 // Supabase prévient le site à chaque changement : ouverture de la page,
 // inscription, connexion ou déconnexion. "session" contient l'utilisateur
 // connecté, ou rien s'il n'y a personne.

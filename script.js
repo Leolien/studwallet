@@ -1,3 +1,12 @@
+// CONNEXION À SUPABASE
+
+// Adresse de notre projet et clé publique (publishable)
+const SUPABASE_URL = "https://ncxayktkblpsuvirnsnj.supabase.co/";
+const SUPABASE_CLE = "sb_publishable__xm3IKCaSwoZ-EkPfVVr7Q_fqM1hpQB";
+
+// Le client sert à parler à Supabase (connexion, lecture et écriture des données)
+const clientSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_CLE);
+
 // SÉLECTION DES ÉLÉMENTS HTML 
 const formulaire = document.getElementById("formulaire");
 const montantInput = document.getElementById("montant");

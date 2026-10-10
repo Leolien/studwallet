@@ -91,6 +91,24 @@ function sauvegarder() {
   localStorage.setItem("studwallet_transactions", JSON.stringify(transactions));
 }
  
+// Lit dans Supabase les transactions de l'utilisateur connecté.
+// Grâce aux règles RLS, Supabase ne renvoie que SES transactions.
+async function chargerTransactionsDepuisSupabase() {
+  const reponse = await clientSupabase
+    .from("transactions")
+    .select("*");
+ 
+  if (reponse.error) {
+    console.error(reponse.error);
+    alert("Impossible de charger vos transactions. Vérifiez votre connexion.");
+    return;
+  }
+ 
+  transactions = reponse.data;
+  trierParDate();
+  mettreAJourAffichage();
+}
+ 
 // TRI PAR DATE 
  
 // Trie les transactions de la plus récente à la plus ancienne.
@@ -245,8 +263,6 @@ function supprimerTransaction(id) {
 }
  
 // LANCEMENT AU CHARGEMENT DE LA PAGE
-transactions = chargerTransactions();
-trierParDate();
 dateInput.value = obtenirDateDuJour();
 mettreAJourAffichage();
  
@@ -377,6 +393,10 @@ function afficherEcranConnexion() {
   emailInput.value = "";
   motDePasseInput.value = "";
   messageAuth.textContent = "";
+ 
+  // On efface aussi les transactions en mémoire : la personne suivante ne doit pas les voir
+  transactions = [];
+  mettreAJourAffichage();
 }
  
 // Quelqu'un est connecté : on cache la connexion et on montre l'application
@@ -384,6 +404,10 @@ function afficherApplication() {
   document.getElementById("vue-auth").classList.add("masque");
   document.getElementById("barre-navigation").classList.remove("masque");
   changerOnglet("vue-budget");
+ 
+  // On charge les transactions de l'utilisateur. "setTimeout" retarde l'appel d'un instant :
+  // Supabase déconseille de l'appeler directement dans onAuthStateChange.
+  setTimeout(chargerTransactionsDepuisSupabase, 0);
 }
  
 // Supabase prévient le site à chaque changement : ouverture de la page,
@@ -396,3 +420,4 @@ clientSupabase.auth.onAuthStateChange(function (evenement, session) {
     afficherEcranConnexion();
   }
 });
+ 

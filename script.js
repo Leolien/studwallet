@@ -62,34 +62,10 @@ function nettoyerTexte(texte) {
   return resultat;
 }
  
-// CHARGEMENT ET SAUVEGARDE (localStorage) 
+// CHARGEMENT DES TRANSACTIONS (Supabase)
  
+// Liste des transactions de l'utilisateur connecté (elle est remplie depuis Supabase)
 let transactions = [];
- 
-// Lit les transactions enregistrées. Si les données sont absentes ou abîmées,
-// on repart avec une liste vide au lieu de faire planter le site.
-function chargerTransactions() {
-  const donneesSauvegardees = localStorage.getItem("studwallet_transactions");
- 
-  if (donneesSauvegardees === null) {
-    return [];
-  }
- 
-  try {
-    const tableau = JSON.parse(donneesSauvegardees);
-    if (Array.isArray(tableau)) {
-      return tableau;
-    }
-    return [];
-  } catch (erreur) {
-    return [];
-  }
-}
- 
-// Enregistre les transactions dans le navigateur
-function sauvegarder() {
-  localStorage.setItem("studwallet_transactions", JSON.stringify(transactions));
-}
  
 // Lit dans Supabase les transactions de l'utilisateur connecté.
 // Grâce aux règles RLS, Supabase ne renvoie que SES transactions.

@@ -207,7 +207,7 @@ function mettreAJourAffichage() {
  
 // AJOUT D'UNE TRANSACTION 
  
-formulaire.addEventListener("submit", function (evenement) {
+formulaire.addEventListener("submit", async function (evenement) {
   evenement.preventDefault();
  
   // On enlève les espaces au début et à la fin du libellé
@@ -222,9 +222,9 @@ formulaire.addEventListener("submit", function (evenement) {
   // On récupère quel bouton radio est coché
   const typeCoche = document.querySelector('input[name="type"]:checked').value;
  
-  // Création de la transaction
+  // Création de la transaction.
+  // Pas d'id ni de user_id : Supabase les remplit tout seul.
   const nouvelleTransaction = {
-    id: Date.now(),
     montant: arrondirMontant(parseFloat(montantInput.value)),
     categorie: categorieInput.value,
     date: dateInput.value,
@@ -232,17 +232,24 @@ formulaire.addEventListener("submit", function (evenement) {
     type: typeCoche
   };
  
-  // Ajout, tri par date, sauvegarde
-  transactions.push(nouvelleTransaction);
-  trierParDate();
-  sauvegarder();
+  // Envoi dans Supabase (on attend la réponse avant de continuer)
+  const reponse = await clientSupabase
+    .from("transactions")
+    .insert(nouvelleTransaction);
+ 
+  if (reponse.error) {
+    console.error(reponse.error);
+    alert("Impossible d'ajouter la transaction. Vérifiez votre connexion.");
+    return;
+  }
  
   // On remet le formulaire à zéro (dépense et date du jour par défaut)
   formulaire.reset();
   document.querySelector('input[name="type"][value="depense"]').checked = true;
   dateInput.value = obtenirDateDuJour();
  
-  mettreAJourAffichage();
+  // On relit la liste dans Supabase pour afficher la nouvelle transaction
+  await chargerTransactionsDepuisSupabase();
 });
  
 // SUPPRESSION D'UNE TRANSACTION

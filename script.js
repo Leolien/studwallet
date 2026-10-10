@@ -254,19 +254,21 @@ formulaire.addEventListener("submit", async function (evenement) {
  
 // SUPPRESSION D'UNE TRANSACTION
  
-function supprimerTransaction(id) {
-  const nouveauTableau = [];
+async function supprimerTransaction(id) {
+  // On demande à Supabase de supprimer la ligne qui a cet id
+  const reponse = await clientSupabase
+    .from("transactions")
+    .delete()
+    .eq("id", id);
  
-  // On garde uniquement les transactions qui n'ont pas l'id supprimé
-  for (let i = 0; i < transactions.length; i = i + 1) {
-    if (transactions[i].id !== id) {
-      nouveauTableau.push(transactions[i]);
-    }
+  if (reponse.error) {
+    console.error(reponse.error);
+    alert("Impossible de supprimer la transaction. Vérifiez votre connexion.");
+    return;
   }
  
-  transactions = nouveauTableau;
-  sauvegarder();
-  mettreAJourAffichage();
+  // On relit la liste dans Supabase pour mettre l'affichage à jour
+  await chargerTransactionsDepuisSupabase();
 }
  
 // LANCEMENT AU CHARGEMENT DE LA PAGE
@@ -427,4 +429,5 @@ clientSupabase.auth.onAuthStateChange(function (evenement, session) {
     afficherEcranConnexion();
   }
 });
+ 
  

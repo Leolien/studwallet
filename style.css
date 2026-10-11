@@ -345,6 +345,63 @@ canvas {
   max-height: 400px;
 }
 
+/* PLAFONDS */
+#liste-plafonds-contenu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plafond-ligne {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.plafond-ligne:last-child {
+  border-bottom: none;
+}
+
+.plafond-categorie {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.plafond-montants {
+  color: var(--gris);
+  text-align: right;
+}
+
+/* SCORE */
+.carte-score {
+  text-align: center;
+}
+
+#texte-score {
+  color: var(--gris);
+}
+
+#score-financier {
+  margin-top: 8px;
+  font-size: 38px;
+  font-weight: bold;
+}
+
+.score-vert {
+  color: var(--vert-texte);
+}
+
+.score-orange {
+  color: #d97706;
+}
+
+.score-rouge {
+  color: var(--rouge);
+}
+
 /* MOBILE */
 @media (max-width: 800px) {
   .layout,

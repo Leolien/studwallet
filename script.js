@@ -75,6 +75,8 @@ function nettoyerTexte(texte) {
 // Liste des transactions de l'utilisateur connecté (elle est remplie depuis Supabase)
 let transactions = [];
 let plafonds = [];
+let graphiqueReel = null;
+let graphiqueTheorique = null;
 
 // Lit dans Supabase les transactions de l'utilisateur connecté.
 // Grâce aux règles RLS, Supabase ne renvoie que SES transactions.
@@ -93,6 +95,7 @@ async function chargerTransactionsDepuisSupabase() {
   trierParDate();
   mettreAJourAffichage();
   calculerEtAfficherScore();
+  actualiserGraphiques();
 }
 
 // TRI PAR DATE
@@ -291,6 +294,7 @@ async function chargerPlafondsDepuisSupabase() {
   plafonds = reponse.data;
   afficherPlafonds();
   calculerEtAfficherScore();
+  actualiserGraphiques();
 }
 
 // Affiche la liste des plafonds dans la carte "Plafonds actuels"
@@ -517,6 +521,144 @@ function afficherScore(score) {
   }
 }
 
+// GRAPHIQUES CHART.JS (tâche 7 : Albin)
+
+// Une couleur fixe pour chaque catégorie : les deux graphiques restent faciles à comparer.
+const couleursCategories = {
+  loyer: "#1E3A8A",
+  courses: "#34D399",
+  transport: "#F59E0B",
+  loisirs: "#8B5CF6",
+  abonnements: "#EF4444",
+  autres: "#6B7280"
+};
+
+// Renvoie la couleur d'une catégorie (gris si la catégorie n'est pas dans la liste)
+function obtenirCouleurCategorie(categorie) {
+  if (couleursCategories[categorie] === undefined) {
+    return "#6B7280";
+  }
+  return couleursCategories[categorie];
+}
+
+// Calcule le total des dépenses du mois actuel pour chaque catégorie.
+// Exemple de résultat : { courses: 120, loisirs: 45.5 }
+function obtenirDepensesReellesDuMois() {
+  const dateAujourdhui = new Date();
+  const moisActuel = (dateAujourdhui.getMonth() + 1).toString().padStart(2, "0");
+  const anneeActuelle = dateAujourdhui.getFullYear().toString();
+
+  const totauxParCategorie = {};
+
+  for (let i = 0; i < transactions.length; i = i + 1) {
+    const transaction = transactions[i];
+    const partiesDate = transaction.date.split("-");
+    const anneeTransaction = partiesDate[0];
+    const moisTransaction = partiesDate[1];
+
+    if (
+      transaction.type === "depense" &&
+      anneeTransaction === anneeActuelle &&
+      moisTransaction === moisActuel
+    ) {
+      if (totauxParCategorie[transaction.categorie] === undefined) {
+        totauxParCategorie[transaction.categorie] = 0;
+      }
+
+      totauxParCategorie[transaction.categorie] =
+        totauxParCategorie[transaction.categorie] + Number(transaction.montant);
+    }
+  }
+
+  return totauxParCategorie;
+}
+
+// Dessine un camembert dans le canvas demandé et renvoie le graphique créé.
+// categories et montants sont deux listes de même longueur.
+function dessinerCamembert(idCanvas, categories, montants) {
+  const contexte = document.getElementById(idCanvas).getContext("2d");
+
+  // On prépare le nom et la couleur de chaque part du camembert
+  const noms = [];
+  const couleurs = [];
+  for (let i = 0; i < categories.length; i = i + 1) {
+    noms.push(formaterNomCategorie(categories[i]));
+    couleurs.push(obtenirCouleurCategorie(categories[i]));
+  }
+
+  return new Chart(contexte, {
+    type: "pie",
+    data: {
+      labels: noms,
+      datasets: [
+        {
+          data: montants,
+          backgroundColor: couleurs,
+          borderColor: "#FFFFFF",
+          borderWidth: 2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "bottom"
+        }
+      }
+    }
+  });
+}
+
+// Crée ou recrée le camembert des dépenses réelles du mois.
+function creerGraphiqueReel() {
+  const depensesParCategorie = obtenirDepensesReellesDuMois();
+
+  // On transforme l'objet en deux listes (catégories et montants)
+  const categories = [];
+  const montants = [];
+  for (const categorie in depensesParCategorie) {
+    categories.push(categorie);
+    montants.push(depensesParCategorie[categorie]);
+  }
+
+  // Un ancien graphique doit être supprimé avant d'utiliser le même canvas.
+  if (graphiqueReel !== null) {
+    graphiqueReel.destroy();
+  }
+
+  graphiqueReel = dessinerCamembert("graphique-reel", categories, montants);
+}
+
+// Crée ou recrée le camembert basé sur les plafonds mensuels.
+function creerGraphiqueTheorique() {
+  const categories = [];
+  const montants = [];
+
+  for (let i = 0; i < plafonds.length; i = i + 1) {
+    const plafond = plafonds[i];
+    const montantMois = Number(plafond.montant_max_mois);
+
+    // On ne garde que les plafonds mensuels existants et strictement positifs.
+    if (plafond.montant_max_mois !== null && montantMois > 0) {
+      categories.push(plafond.categorie);
+      montants.push(montantMois);
+    }
+  }
+
+  if (graphiqueTheorique !== null) {
+    graphiqueTheorique.destroy();
+  }
+
+  graphiqueTheorique = dessinerCamembert("graphique-theorique", categories, montants);
+}
+
+// Met à jour les deux graphiques après tout changement de données.
+function actualiserGraphiques() {
+  creerGraphiqueReel();
+  creerGraphiqueTheorique();
+}
+
 // LANCEMENT AU CHARGEMENT DE LA PAGE
 dateInput.value = obtenirDateDuJour();
 mettreAJourAffichage();
@@ -657,6 +799,7 @@ function afficherEcranConnexion() {
   listePlafondsContenu.textContent = "";
   mettreAJourAffichage();
   calculerEtAfficherScore();
+  actualiserGraphiques();
 }
 
 // Quelqu'un est connecté : on cache la connexion et on montre l'application

@@ -814,13 +814,22 @@ function afficherApplication() {
   setTimeout(chargerPlafondsDepuisSupabase, 0);
 }
 
+// Retient si l'application est déjà affichée. Supabase peut prévenir plusieurs fois
+// pour la même connexion (par exemple quand on revient sur la fenêtre du navigateur) :
+// sans ça, on serait renvoyé sur l'onglet Budget à chaque fois.
+let applicationAffichee = false;
+
 // Supabase prévient le site à chaque changement : ouverture de la page,
 // inscription, connexion ou déconnexion. "session" contient l'utilisateur
 // connecté, ou rien s'il n'y a personne.
 clientSupabase.auth.onAuthStateChange(function (evenement, session) {
   if (session) {
-    afficherApplication();
+    if (applicationAffichee === false) {
+      applicationAffichee = true;
+      afficherApplication();
+    }
   } else {
+    applicationAffichee = false;
     afficherEcranConnexion();
   }
 });

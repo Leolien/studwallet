@@ -1,0 +1,411 @@
+/* COULEURS  */
+:root {
+  --vert: #34D399;
+  --vert-clair: #D1FAE5;
+  --vert-texte: #059669;
+  --rouge: #EF4444;
+  --bleu-fonce: #1E3A8A;
+  --fond: #FAFAF8;
+  --texte: #1F2937;
+  --gris: #6B7280;
+  --bordure: #E5E7EB;
+}
+
+/* BASE  */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--fond);
+  color: var(--texte);
+  font-family: "Nunito", Arial, sans-serif;
+}
+
+/* Cache un élément (utilisé pour les vues et la navigation) */
+.masque {
+  display: none !important;
+}
+
+header {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 20px 0;
+}
+
+h1 {
+  margin: 0;
+  color: var(--vert-texte);
+  font-size: 28px;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+p {
+  margin: 0;
+}
+
+/* BARRE DE NAVIGATION */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 20px 0;
+}
+
+.onglets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+nav button {
+  padding: 8px 16px;
+  border: 1px solid var(--bordure);
+  border-radius: 999px;
+  background-color: white;
+  color: var(--gris);
+  font-size: 14px;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+nav button:hover {
+  border-color: var(--vert);
+  color: var(--vert-texte);
+}
+
+/* Onglet actif */
+nav button.onglet-actif {
+  background-color: var(--vert-clair);
+  border-color: var(--vert);
+  color: var(--vert-texte);
+}
+
+#btn-deconnexion {
+  color: var(--rouge);
+}
+
+#btn-deconnexion:hover {
+  border-color: var(--rouge);
+  color: var(--rouge);
+}
+
+/* MISE EN PAGE */
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.colonne-principale {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.colonne-formulaire {
+  align-self: start;
+}
+
+/* Vues simples : connexion, plafonds, graphiques */
+.vue {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* La connexion est une carte étroite, centrée */
+#vue-auth {
+  max-width: 490px;
+  margin: 40px auto 0;
+}
+
+/* CARTES */
+.carte {
+  background-color: white;
+  border: 1px solid var(--bordure);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.synthese {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.carte-solde {
+  background-color: var(--vert-clair);
+  border-color: var(--vert-clair);
+}
+
+#solde {
+  margin-top: 8px;
+  color: var(--vert-texte);
+  font-size: 40px;
+  font-weight: bold;
+}
+
+#revenus-mois,
+#depenses-mois {
+  margin-top: 8px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+#revenus-mois { color: var(--vert-texte); }
+#depenses-mois { color: var(--rouge); }
+
+/* LISTE DES TRANSACTIONS*/
+#message-vide {
+  color: var(--gris);
+}
+
+#liste-transactions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#liste-transactions li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bordure);
+}
+
+/* Catégorie et date sous le libellé  */
+.details-transaction {
+  display: block;
+  color: var(--gris);
+  text-transform: capitalize;
+}
+
+/* Montant et bouton poubelle à droite */
+.actions-transaction {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.montant-revenu {
+  color: var(--vert-texte);
+  font-weight: bold;
+}
+
+.montant-depense {
+  color: var(--rouge);
+  font-weight: bold;
+}
+
+.bouton-supprimer {
+  background: none;
+  border: none;
+  color: var(--rouge);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* FORMULAIRE */
+label {
+  display: block;
+  margin-top: 14px;
+  margin-bottom: 4px;
+  color: var(--gris);
+  font-size: 14px;
+}
+
+input[type="number"],
+input[type="date"],
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--bordure);
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid var(--vert);
+}
+
+/* Boutons radio Revenu / Dépense */
+.toggle-type {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.toggle-type label {
+  flex: 1;
+  margin: 0;
+}
+
+.toggle-type input {
+  display: none;
+}
+
+.toggle-type span {
+  display: block;
+  padding: 10px;
+  border: 1px solid var(--bordure);
+  border-radius: 999px;
+  background-color: white;
+  color: var(--gris);
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.toggle-type input[value="revenu"]:checked + span {
+  background-color: var(--vert);
+  border-color: var(--vert);
+  color: white;
+}
+
+.toggle-type input[value="depense"]:checked + span {
+  background-color: var(--rouge);
+  border-color: var(--rouge);
+  color: white;
+}
+
+button[type="submit"] {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  border: none;
+  border-radius: 999px;
+  background-color: var(--bleu-fonce);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* CONNEXION : deux boutons côte à côte */
+.boutons-auth {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.boutons-auth button {
+  flex: 1;
+  margin-top: 0;
+}
+
+/* "S'inscrire" : même forme que "Se connecter", fond blanc */
+#btn-inscription {
+  padding: 12px;
+  border: 1px solid var(--bleu-fonce);
+  border-radius: 999px;
+  background-color: white;
+  color: var(--bleu-fonce);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Messages d'erreur de la connexion */
+#message-auth {
+  margin-top: 12px;
+  color: var(--rouge);
+  font-size: 14px;
+}
+
+/* PLAFONDS ET GRAPHIQUES */
+#liste-plafonds-contenu {
+  color: var(--gris);
+}
+
+canvas {
+  max-width: 100%;
+  max-height: 400px;
+}
+
+/* PLAFONDS */
+#liste-plafonds-contenu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plafond-ligne {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.plafond-ligne:last-child {
+  border-bottom: none;
+}
+
+.plafond-categorie {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.plafond-montants {
+  color: var(--gris);
+  text-align: right;
+}
+
+/* SCORE */
+.carte-score {
+  text-align: center;
+}
+
+#texte-score {
+  color: var(--gris);
+}
+
+#score-financier {
+  margin-top: 8px;
+  font-size: 38px;
+  font-weight: bold;
+}
+
+.score-vert {
+  color: var(--vert-texte);
+}
+
+.score-orange {
+  color: #d97706;
+}
+
+.score-rouge {
+  color: var(--rouge);
+}
+
+/* MOBILE */
+@media (max-width: 800px) {
+  .layout,
+  .synthese {
+    grid-template-columns: 1fr;
+  }
+}

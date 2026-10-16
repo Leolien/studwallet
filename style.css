@@ -1,13 +1,19 @@
 /* COULEURS  */
 :root {
-  --vert: #34D399;
-  --vert-clair: #D1FAE5;
-  --vert-texte: #059669;
-  --rouge: #EF4444;
-  --bleu-fonce: #1E3A8A;
-  --fond: #CAE6D9;
-  --texte: #1F2937;
-  --gris: #6B7280;
+  --fond-page: #F0FDF4;          /* fond général du site */
+  --fond-carte: #FFFFFF;         /* fond des cartes et des boutons blancs */
+  --fond-mis-en-avant: #D1FAE5;  /* carte du solde, onglet actif */
+
+  --accent: #34D399;             /* bordures actives, focus, bouton Revenu coché */
+  --texte-accent: #059669;       /* titre StudWallet, solde, onglet actif */
+
+  --revenu: #059669;             /* montants positifs */
+  --depense: #EF4444;            /* montants négatifs */
+  --danger: #EF4444;             /* déconnexion, suppression, messages d'erreur */
+  --bouton-principal: #1E3A8A;   /* boutons Ajouter, Se connecter, Enregistrer */
+
+  --texte-principal: #1F2937;
+  --texte-secondaire: #6B7280;   /* labels, dates, catégories */
   --bordure: #E5E7EB;
 }
 
@@ -18,8 +24,8 @@
 
 body {
   margin: 0;
-  background-color: var(--fond);
-  color: var(--texte);
+  background-color: var(--fond-page);
+  color: var(--texte-principal);
   font-family: "Nunito", Arial, sans-serif;
 }
 
@@ -36,7 +42,7 @@ header {
 
 h1 {
   margin: 0;
-  color: var(--vert-texte);
+  color: var(--texte-accent);
   font-size: 28px;
 }
 
@@ -71,8 +77,8 @@ nav button {
   padding: 8px 16px;
   border: 1px solid var(--bordure);
   border-radius: 999px;
-  background-color: white;
-  color: var(--gris);
+  background-color: var(--fond-carte);
+  color: var(--texte-secondaire);
   font-size: 14px;
   font-weight: bold;
   font-family: inherit;
@@ -80,24 +86,24 @@ nav button {
 }
 
 nav button:hover {
-  border-color: var(--vert);
-  color: var(--vert-texte);
+  border-color: var(--accent);
+  color: var(--texte-accent);
 }
 
 /* Onglet actif */
 nav button.onglet-actif {
-  background-color: var(--vert-clair);
-  border-color: var(--vert);
-  color: var(--vert-texte);
+  background-color: var(--fond-mis-en-avant);
+  border-color: var(--accent);
+  color: var(--texte-accent);
 }
 
 #btn-deconnexion {
-  color: var(--rouge);
+  color: var(--danger);
 }
 
 #btn-deconnexion:hover {
-  border-color: var(--rouge);
-  color: var(--rouge);
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 /* MISE EN PAGE */
@@ -138,7 +144,7 @@ nav button.onglet-actif {
 
 /* CARTES */
 .carte {
-  background-color: white;
+  background-color: var(--fond-carte);
   border: 1px solid var(--bordure);
   border-radius: 16px;
   padding: 20px;
@@ -151,13 +157,13 @@ nav button.onglet-actif {
 }
 
 .carte-solde {
-  background-color: var(--vert-clair);
-  border-color: var(--vert-clair);
+  background-color: var(--fond-mis-en-avant);
+  border-color: var(--fond-mis-en-avant);
 }
 
 #solde {
   margin-top: 8px;
-  color: var(--vert-texte);
+  color: var(--texte-accent);
   font-size: 40px;
   font-weight: bold;
 }
@@ -169,12 +175,12 @@ nav button.onglet-actif {
   font-weight: bold;
 }
 
-#revenus-mois { color: var(--vert-texte); }
-#depenses-mois { color: var(--rouge); }
+#revenus-mois { color: var(--revenu); }
+#depenses-mois { color: var(--depense); }
 
 /* LISTE DES TRANSACTIONS*/
 #message-vide {
-  color: var(--gris);
+  color: var(--texte-secondaire);
 }
 
 #liste-transactions {
@@ -194,7 +200,7 @@ nav button.onglet-actif {
 /* Catégorie et date sous le libellé  */
 .details-transaction {
   display: block;
-  color: var(--gris);
+  color: var(--texte-secondaire);
   text-transform: capitalize;
 }
 
@@ -206,19 +212,19 @@ nav button.onglet-actif {
 }
 
 .montant-revenu {
-  color: var(--vert-texte);
+  color: var(--revenu);
   font-weight: bold;
 }
 
 .montant-depense {
-  color: var(--rouge);
+  color: var(--depense);
   font-weight: bold;
 }
 
 .bouton-supprimer {
   background: none;
   border: none;
-  color: var(--rouge);
+  color: var(--danger);
   cursor: pointer;
   font-size: 16px;
 }
@@ -228,7 +234,7 @@ label {
   display: block;
   margin-top: 14px;
   margin-bottom: 4px;
-  color: var(--gris);
+  color: var(--texte-secondaire);
   font-size: 14px;
 }
 
@@ -248,7 +254,7 @@ select {
 
 input:focus,
 select:focus {
-  outline: 2px solid var(--vert);
+  outline: 2px solid var(--accent);
 }
 
 /* Boutons radio Revenu / Dépense */
@@ -272,22 +278,22 @@ select:focus {
   padding: 10px;
   border: 1px solid var(--bordure);
   border-radius: 999px;
-  background-color: white;
-  color: var(--gris);
+  background-color: var(--fond-carte);
+  color: var(--texte-secondaire);
   text-align: center;
   font-weight: bold;
   cursor: pointer;
 }
 
 .toggle-type input[value="revenu"]:checked + span {
-  background-color: var(--vert);
-  border-color: var(--vert);
+  background-color: var(--accent);
+  border-color: var(--accent);
   color: white;
 }
 
 .toggle-type input[value="depense"]:checked + span {
-  background-color: var(--rouge);
-  border-color: var(--rouge);
+  background-color: var(--depense);
+  border-color: var(--depense);
   color: white;
 }
 
@@ -297,7 +303,7 @@ button[type="submit"] {
   padding: 12px;
   border: none;
   border-radius: 999px;
-  background-color: var(--bleu-fonce);
+  background-color: var(--bouton-principal);
   color: white;
   font-size: 16px;
   font-weight: bold;
@@ -319,10 +325,10 @@ button[type="submit"] {
 /* "S'inscrire" : même forme que "Se connecter", fond blanc */
 #btn-inscription {
   padding: 12px;
-  border: 1px solid var(--bleu-fonce);
+  border: 1px solid var(--bouton-principal);
   border-radius: 999px;
-  background-color: white;
-  color: var(--bleu-fonce);
+  background-color: var(--fond-carte);
+  color: var(--bouton-principal);
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
@@ -331,13 +337,13 @@ button[type="submit"] {
 /* Messages d'erreur de la connexion */
 #message-auth {
   margin-top: 12px;
-  color: var(--rouge);
+  color: var(--danger);
   font-size: 14px;
 }
 
 /* PLAFONDS ET GRAPHIQUES */
 #liste-plafonds-contenu {
-  color: var(--gris);
+  color: var(--texte-secondaire);
 }
 
 canvas {
@@ -371,7 +377,7 @@ canvas {
 }
 
 .plafond-montants {
-  color: var(--gris);
+  color: var(--texte-secondaire);
   text-align: right;
 }
 
@@ -381,7 +387,7 @@ canvas {
 }
 
 #texte-score {
-  color: var(--gris);
+  color: var(--texte-secondaire);
 }
 
 #score-financier {
@@ -391,7 +397,7 @@ canvas {
 }
 
 .score-vert {
-  color: var(--vert-texte);
+  color: var(--texte-accent);
 }
 
 .score-orange {
@@ -399,7 +405,7 @@ canvas {
 }
 
 .score-rouge {
-  color: var(--rouge);
+  color: var(--danger);
 }
 
 /* MOBILE */

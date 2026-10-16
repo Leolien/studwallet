@@ -707,7 +707,7 @@ function traduireErreurAuth(erreur) {
   const message = erreur.message;
 
   if (code === "invalid_credentials" || message === "Invalid login credentials") {
-    return "Email ou mot de passe incorrect.";
+      return "Email ou mot de passe incorrect. Pas encore de compte ? Cliquez sur Créer mon compte.";
   }
   if (code === "user_already_exists" || message === "User already registered") {
     return "Un compte existe déjà avec cet email. Cliquez sur « Se connecter ».";

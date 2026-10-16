@@ -322,16 +322,21 @@ button[type="submit"] {
   margin-top: 0;
 }
 
-/* "S'inscrire" : même forme que "Se connecter", fond blanc */
+/* "Créer mon compte" : même style que "Se connecter" */
 #btn-inscription {
   padding: 12px;
-  border: 1px solid var(--bouton-principal);
+  border: none;
   border-radius: 999px;
-  background-color: var(--fond-carte);
-  color: var(--bouton-principal);
+  background-color: var(--bouton-principal);
+  color: white;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
+}
+
+/* Titre "Bienvenue" centré dans la carte */
+#form-auth h2 {
+  text-align: center;
 }
 
 /* Messages d'erreur de la connexion */

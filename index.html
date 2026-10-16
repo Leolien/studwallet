@@ -45,10 +45,13 @@
         <label for="mot-de-passe">Mot de passe</label>
         <input type="password" id="mot-de-passe" placeholder="Votre mot de passe" required>
 
-        <div class="boutons-auth">
-          <button type="submit" id="btn-connexion">Se connecter</button>
-          <button type="button" id="btn-inscription">S'inscrire</button>
-        </div>
+        <button type="submit" id="btn-connexion">Se connecter</button>
+
+        <!-- Lien vers l'inscription, sous le bouton de connexion -->
+        <p class="lien-inscription">
+          Pas encore de compte ?
+          <button type="button" id="btn-inscription">Créer un compte</button>
+        </p>
 
         <!-- Messages d'erreur de connexion (mot de passe trop court, mauvais identifiants...) -->
         <p id="message-auth"></p>

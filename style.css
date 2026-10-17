@@ -419,4 +419,25 @@ canvas {
   .synthese {
     grid-template-columns: 1fr;
   }
+
+  /* Espace en bas pour que le badge Netlify ne cache pas le dernier bouton */
+  main {
+    padding-bottom: 80px;
+  }
+
+  /* Plafonds : la catégorie au-dessus, les montants en dessous */
+  .plafond-ligne {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .plafond-montants {
+    text-align: left;
+  }
+
+  /* Connexion : les deux boutons l'un sous l'autre */
+  .boutons-auth {
+    flex-direction: column;
+  }
 }

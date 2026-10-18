@@ -523,6 +523,12 @@ function afficherScore(score) {
 
 // GRAPHIQUES CHART.JS (tâche 7 : Albin)
 
+// Active le module qui affiche les pourcentages sur les camemberts.
+// La condition évite de bloquer tout le site si le module n'a pas pu se charger.
+if (typeof ChartDataLabels !== "undefined") {
+  Chart.register(ChartDataLabels);
+}
+
 // Une couleur fixe pour chaque catégorie : les deux graphiques restent faciles à comparer.
 const couleursCategories = {
   loyer: "#1E3A8A",
@@ -573,7 +579,26 @@ function obtenirDepensesReellesDuMois() {
   return totauxParCategorie;
 }
 
-// Dessine un camembert dans le canvas demandé et renvoie le graphique créé.
+// Calcule la part d'un montant dans le total du graphique (ex : "25,0 %").
+function formaterPourcentage(valeur, contexte) {
+  const montants = contexte.dataset.data;
+  let total = 0;
+
+  for (let i = 0; i < montants.length; i = i + 1) {
+    total = total + Number(montants[i]);
+  }
+
+  // Aucun pourcentage si le total ou le montant est nul.
+  if (total === 0 || Number(valeur) === 0) {
+    return "";
+  }
+
+  const pourcentage = (Number(valeur) / total) * 100;
+
+  return pourcentage.toFixed(1).replace(".", ",") + " %";
+}
+
+// Dessine un camembert dans le canvas demandé, avec les pourcentages sur les parts.
 // categories et montants sont deux listes de même longueur.
 function dessinerCamembert(idCanvas, categories, montants) {
   const contexte = document.getElementById(idCanvas).getContext("2d");
@@ -604,6 +629,16 @@ function dessinerCamembert(idCanvas, categories, montants) {
       plugins: {
         legend: {
           position: "bottom"
+        },
+        datalabels: {
+          formatter: formaterPourcentage,
+          color: "#FFFFFF",
+          textStrokeColor: "#1F2937",
+          textStrokeWidth: 2,
+          font: {
+            weight: "bold",
+            size: 14
+          }
         }
       }
     }

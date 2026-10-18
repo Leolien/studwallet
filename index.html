@@ -7,20 +7,24 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <!-- Chart.js (pour les graphiques) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Bibliothèques externes. Les versions sont fixées pour que le site ne change pas
+       tout seul si une nouvelle version sort. -->
+  <!-- Chart.js : les graphiques en camembert -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+  <!-- Module de Chart.js qui affiche les pourcentages sur les parts des camemberts -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+  <!-- Supabase : comptes utilisateurs et base de données -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script src="script.js" defer></script>
 </head>
 <body>
 
-  <!-- En-tête -->
   <header>
     <h1>StudWallet</h1>
   </header>
 
-  <!-- Barre de navigation : 3 onglets + déconnexion -->
-  <!-- changerOnglet() est dans script.js. La fonction deconnexion() sera écrite à la tâche 4. -->
+  <!-- Barre de navigation : cachée tant que personne n'est connecté -->
   <nav id="barre-navigation" class="masque">
     <div class="onglets">
       <button type="button" class="onglet" aria-controls="vue-budget" aria-selected="false" onclick="changerOnglet('vue-budget')">Budget</button>
@@ -32,12 +36,13 @@
 
   <main>
 
+    <!-- Toutes les vues sont cachées au départ. Dès que Supabase répond, script.js
+         affiche soit l'écran de connexion (personne de connecté), soit l'application. -->
+
     <!-- ===== VUE CONNEXION / INSCRIPTION ===== -->
-    <!-- Au départ, toutes les vues sont cachées. Dès que Supabase répond,
-         script.js affiche soit cette vue (personne de connecté), soit l'application. -->
     <section id="vue-auth" class="vue masque">
       <form id="form-auth" class="carte">
-        <h2>Connexion</h2>
+        <h2>Bienvenue</h2>
 
         <label for="email">Adresse e-mail</label>
         <input type="email" id="email" placeholder="exemple@email.com" required>
@@ -47,27 +52,25 @@
 
         <div class="boutons-auth">
           <button type="submit" id="btn-connexion">Se connecter</button>
-          <button type="button" id="btn-inscription">S'inscrire</button>
+          <button type="button" id="btn-inscription">Créer mon compte</button>
         </div>
 
-        <!-- Messages d'erreur de connexion (mot de passe trop court, mauvais identifiants...) -->
+        <!-- Message d'erreur affiché par script.js (mauvais identifiants, mot de passe trop court...) -->
         <p id="message-auth"></p>
       </form>
     </section>
 
-    <!-- ===== VUE BUDGET (le MVP) ===== -->
+    <!-- ===== VUE BUDGET ===== -->
     <section id="vue-budget" class="layout masque">
 
-      <!-- Colonne de gauche : solde, synthèse et liste des transactions -->
+      <!-- Colonne de gauche : solde, synthèse du mois et liste des transactions -->
       <div class="colonne-principale">
 
-        <!-- Carte du solde global -->
         <div class="carte carte-solde">
           <p>Solde actuel</p>
           <p id="solde">0,00 €</p>
         </div>
 
-        <!-- Cartes de synthèse du mois en cours -->
         <div class="synthese">
           <div class="carte">
             <p>Revenus ce mois</p>
@@ -79,7 +82,6 @@
           </div>
         </div>
 
-        <!-- Liste des transactions -->
         <div class="carte">
           <h2>Transactions</h2>
           <p id="message-vide">Aucune transaction pour le moment.</p>
@@ -99,11 +101,19 @@
           <label for="categorie">Catégorie</label>
           <select id="categorie" required>
             <option value="">Sélectionner...</option>
-            <option value="loyer">Loyer</option>
-            <option value="courses">Courses</option>
-            <option value="transport">Transport</option>
-            <option value="loisirs">Loisirs</option>
-            <option value="abonnements">Abonnements</option>
+            <optgroup label="Dépenses">
+              <option value="loyer">Loyer</option>
+              <option value="courses">Courses</option>
+              <option value="transport">Transport</option>
+              <option value="loisirs">Loisirs</option>
+              <option value="abonnements">Abonnements</option>
+            </optgroup>
+            <optgroup label="Revenus">
+              <option value="salaire">Salaire</option>
+              <option value="bourse">Bourse</option>
+              <option value="aides">Aides (CAF, APL)</option>
+              <option value="famille">Famille</option>
+            </optgroup>
             <option value="autres">Autres</option>
           </select>
 
@@ -113,7 +123,7 @@
           <label for="libelle">Libellé</label>
           <input type="text" id="libelle" placeholder="Ex. : courses de la semaine" required>
 
-          <!-- Choix Revenu / Dépense -->
+          <!-- Boutons radio cachés en CSS : on ne voit que les deux pastilles Revenu / Dépense -->
           <div class="toggle-type">
             <label>
               <input type="radio" name="type" value="revenu">
@@ -137,6 +147,7 @@
       <form id="form-plafonds" class="carte">
         <h2>Définir un plafond</h2>
 
+        <!-- Seulement les catégories de dépenses : un plafond n'a pas de sens pour un revenu -->
         <label for="plafond-categorie">Catégorie</label>
         <select id="plafond-categorie" required>
           <option value="">Sélectionner...</option>
@@ -159,18 +170,13 @@
 
       <div class="carte">
         <h2>Plafonds actuels</h2>
-        <div id="liste-plafonds-contenu">
-          <!-- Les plafonds seront affichés ici avec JavaScript (tâche 6) -->
-        </div>
+        <!-- Rempli par afficherPlafonds() dans script.js -->
+        <div id="liste-plafonds-contenu"></div>
       </div>
 
       <div class="carte carte-score">
         <h2>Score de santé financière</h2>
-
-        <p id="texte-score">
-            Ajoutez au moins un plafond pour obtenir votre score.
-        </p>
-
+        <p id="texte-score">Ajoutez au moins un plafond mensuel pour obtenir votre score.</p>
         <p id="score-financier">-- / 100</p>
       </div>
 

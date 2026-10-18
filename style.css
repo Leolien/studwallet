@@ -1,42 +1,45 @@
-/* COULEURS  */
+/* ============================================================
+   COULEURS
+   ============================================================ */
 :root {
-  --vert: #34D399;
-  --vert-clair: #D1FAE5;
-  --vert-texte: #059669;
-  --rouge: #EF4444;
-  --bleu-fonce: #1E3A8A;
-  --fond: #FAFAF8;
-  --texte: #1F2937;
-  --gris: #6B7280;
+  --fond-page: #ECFAD7;          /* fond général du site */
+  --fond-carte: #FFFFFF;         /* fond des cartes et des boutons blancs */
+  --fond-mis-en-avant: #D1FAE5;  /* carte du solde, onglet actif */
+
+  --accent: #34D399;             /* bordures actives, focus, bouton Revenu coché */
+  --texte-accent: #059669;       /* titre StudWallet, solde, onglet actif */
+
+  --revenu: #059669;             /* montants positifs */
+  --depense: #EF4444;            /* montants négatifs */
+  --danger: #EF4444;             /* déconnexion, suppression, messages d'erreur */
+  --score-moyen: #D97706;        /* score "à surveiller" (orange) */
+
+  --bouton-principal: #1E3A8A;   /* boutons Ajouter, Se connecter, Créer mon compte, Enregistrer */
+  --texte-sur-bouton: #FFFFFF;   /* texte des boutons pleins */
+
+  --texte-principal: #1F2937;
+  --texte-secondaire: #6B7280;   /* labels, dates, catégories */
   --bordure: #E5E7EB;
 }
 
-/* BASE  */
+
+/* ============================================================
+   BASE
+   ============================================================ */
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  background-color: var(--fond);
-  color: var(--texte);
-  font-family: "Nunito", Arial, sans-serif;
-}
-
-/* Cache un élément (utilisé pour les vues et la navigation) */
-.masque {
-  display: none !important;
-}
-
-header {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px 20px 0;
+  background-color: var(--fond-page);
+  color: var(--texte-principal);
+  font-family: Arial, sans-serif;
 }
 
 h1 {
   margin: 0;
-  color: var(--vert-texte);
+  color: var(--texte-accent);
   font-size: 28px;
 }
 
@@ -49,7 +52,22 @@ p {
   margin: 0;
 }
 
-/* BARRE DE NAVIGATION */
+/* Cache un élément. Le "!important" garantit qu'aucune autre règle ne le réaffiche :
+   script.js s'en sert pour les vues, la navigation et le message "Aucune transaction". */
+.masque {
+  display: none !important;
+}
+
+
+/* ============================================================
+   EN-TÊTE ET NAVIGATION
+   ============================================================ */
+header {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 20px 0;
+}
+
 nav {
   display: flex;
   justify-content: space-between;
@@ -71,8 +89,8 @@ nav button {
   padding: 8px 16px;
   border: 1px solid var(--bordure);
   border-radius: 999px;
-  background-color: white;
-  color: var(--gris);
+  background-color: var(--fond-carte);
+  color: var(--texte-secondaire);
   font-size: 14px;
   font-weight: bold;
   font-family: inherit;
@@ -80,27 +98,31 @@ nav button {
 }
 
 nav button:hover {
-  border-color: var(--vert);
-  color: var(--vert-texte);
+  border-color: var(--accent);
+  color: var(--texte-accent);
 }
 
-/* Onglet actif */
 nav button.onglet-actif {
-  background-color: var(--vert-clair);
-  border-color: var(--vert);
-  color: var(--vert-texte);
+  background-color: var(--fond-mis-en-avant);
+  border-color: var(--accent);
+  color: var(--texte-accent);
 }
 
-#btn-deconnexion {
-  color: var(--rouge);
+#btn-deconnexion,
+#btn-deconnexion:hover {
+  color: var(--danger);
 }
 
 #btn-deconnexion:hover {
-  border-color: var(--rouge);
-  color: var(--rouge);
+  border-color: var(--danger);
 }
 
-/* MISE EN PAGE */
+
+/* ============================================================
+   MISE EN PAGE
+   ============================================================ */
+
+/* Vue Budget : liste à gauche (2/3), formulaire à droite (1/3) */
 .layout {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -116,11 +138,12 @@ nav button.onglet-actif {
   gap: 16px;
 }
 
+/* Le formulaire garde sa hauteur au lieu de s'étirer jusqu'en bas de la liste */
 .colonne-formulaire {
   align-self: start;
 }
 
-/* Vues simples : connexion, plafonds, graphiques */
+/* Vues sur une seule colonne : connexion, plafonds, graphiques */
 .vue {
   display: flex;
   flex-direction: column;
@@ -130,36 +153,38 @@ nav button.onglet-actif {
   padding: 20px;
 }
 
-/* La connexion est une carte étroite, centrée */
 #vue-auth {
   max-width: 490px;
   margin: 40px auto 0;
 }
 
-/* CARTES */
+
+/* ============================================================
+   CARTES ET SYNTHÈSE
+   ============================================================ */
 .carte {
-  background-color: white;
+  background-color: var(--fond-carte);
   border: 1px solid var(--bordure);
   border-radius: 16px;
   padding: 20px;
+}
+
+.carte-solde {
+  background-color: var(--fond-mis-en-avant);
+  border-color: var(--fond-mis-en-avant);
+}
+
+#solde {
+  margin-top: 8px;
+  color: var(--texte-accent);
+  font-size: 40px;
+  font-weight: bold;
 }
 
 .synthese {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-}
-
-.carte-solde {
-  background-color: var(--vert-clair);
-  border-color: var(--vert-clair);
-}
-
-#solde {
-  margin-top: 8px;
-  color: var(--vert-texte);
-  font-size: 40px;
-  font-weight: bold;
 }
 
 #revenus-mois,
@@ -169,12 +194,20 @@ nav button.onglet-actif {
   font-weight: bold;
 }
 
-#revenus-mois { color: var(--vert-texte); }
-#depenses-mois { color: var(--rouge); }
+#revenus-mois {
+  color: var(--revenu);
+}
 
-/* LISTE DES TRANSACTIONS*/
+#depenses-mois {
+  color: var(--depense);
+}
+
+
+/* ============================================================
+   LISTE DES TRANSACTIONS
+   ============================================================ */
 #message-vide {
-  color: var(--gris);
+  color: var(--texte-secondaire);
 }
 
 #liste-transactions {
@@ -191,14 +224,12 @@ nav button.onglet-actif {
   border-bottom: 1px solid var(--bordure);
 }
 
-/* Catégorie et date sous le libellé  */
 .details-transaction {
   display: block;
-  color: var(--gris);
+  color: var(--texte-secondaire);
   text-transform: capitalize;
 }
 
-/* Montant et bouton poubelle à droite */
 .actions-transaction {
   display: flex;
   align-items: center;
@@ -206,29 +237,32 @@ nav button.onglet-actif {
 }
 
 .montant-revenu {
-  color: var(--vert-texte);
+  color: var(--revenu);
   font-weight: bold;
 }
 
 .montant-depense {
-  color: var(--rouge);
+  color: var(--depense);
   font-weight: bold;
 }
 
 .bouton-supprimer {
   background: none;
   border: none;
-  color: var(--rouge);
+  color: var(--danger);
   cursor: pointer;
   font-size: 16px;
 }
 
-/* FORMULAIRE */
+
+/* ============================================================
+   FORMULAIRES
+   ============================================================ */
 label {
   display: block;
   margin-top: 14px;
   margin-bottom: 4px;
-  color: var(--gris);
+  color: var(--texte-secondaire);
   font-size: 14px;
 }
 
@@ -248,10 +282,11 @@ select {
 
 input:focus,
 select:focus {
-  outline: 2px solid var(--vert);
+  outline: 2px solid var(--accent);
 }
 
-/* Boutons radio Revenu / Dépense */
+/* Choix Revenu / Dépense : les boutons radio sont cachés,
+   on clique sur les pastilles (les <span>) qui les accompagnent. */
 .toggle-type {
   display: flex;
   gap: 10px;
@@ -272,39 +307,59 @@ select:focus {
   padding: 10px;
   border: 1px solid var(--bordure);
   border-radius: 999px;
-  background-color: white;
-  color: var(--gris);
+  background-color: var(--fond-carte);
+  color: var(--texte-secondaire);
   text-align: center;
   font-weight: bold;
   cursor: pointer;
 }
 
+/* "input:checked + span" : la pastille juste après le bouton radio coché */
 .toggle-type input[value="revenu"]:checked + span {
-  background-color: var(--vert);
-  border-color: var(--vert);
-  color: white;
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--texte-sur-bouton);
 }
 
 .toggle-type input[value="depense"]:checked + span {
-  background-color: var(--rouge);
-  border-color: var(--rouge);
-  color: white;
+  background-color: var(--depense);
+  border-color: var(--depense);
+  color: var(--texte-sur-bouton);
 }
 
-button[type="submit"] {
-  width: 100%;
-  margin-top: 16px;
+
+/* ============================================================
+   BOUTONS PRINCIPAUX
+   ============================================================ */
+
+/* Style commun aux boutons bleus pleins */
+button[type="submit"],
+#btn-inscription {
   padding: 12px;
   border: none;
   border-radius: 999px;
-  background-color: var(--bleu-fonce);
-  color: white;
+  background-color: var(--bouton-principal);
+  color: var(--texte-sur-bouton);
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
 }
 
-/* CONNEXION : deux boutons côte à côte */
+/* Les boutons d'envoi des formulaires prennent toute la largeur */
+button[type="submit"] {
+  width: 100%;
+  margin-top: 16px;
+}
+
+
+/* ============================================================
+   CONNEXION
+   ============================================================ */
+#form-auth h2 {
+  text-align: center;
+}
+
+/* Deux boutons côte à côte, de même largeur */
 .boutons-auth {
   display: flex;
   gap: 10px;
@@ -316,40 +371,21 @@ button[type="submit"] {
   margin-top: 0;
 }
 
-/* "S'inscrire" : même forme que "Se connecter", fond blanc */
-#btn-inscription {
-  padding: 12px;
-  border: 1px solid var(--bleu-fonce);
-  border-radius: 999px;
-  background-color: white;
-  color: var(--bleu-fonce);
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* Messages d'erreur de la connexion */
 #message-auth {
   margin-top: 12px;
-  color: var(--rouge);
+  color: var(--danger);
   font-size: 14px;
 }
 
-/* PLAFONDS ET GRAPHIQUES */
-#liste-plafonds-contenu {
-  color: var(--gris);
-}
 
-canvas {
-  max-width: 100%;
-  max-height: 400px;
-}
-
-/* PLAFONDS */
+/* ============================================================
+   PLAFONDS ET SCORE
+   ============================================================ */
 #liste-plafonds-contenu {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  color: var(--texte-secondaire);
 }
 
 .plafond-ligne {
@@ -371,17 +407,16 @@ canvas {
 }
 
 .plafond-montants {
-  color: var(--gris);
+  color: var(--texte-secondaire);
   text-align: right;
 }
 
-/* SCORE */
 .carte-score {
   text-align: center;
 }
 
 #texte-score {
-  color: var(--gris);
+  color: var(--texte-secondaire);
 }
 
 #score-financier {
@@ -390,22 +425,57 @@ canvas {
   font-weight: bold;
 }
 
+/* Classes ajoutées par script.js selon la valeur du score */
 .score-vert {
-  color: var(--vert-texte);
+  color: var(--texte-accent);
 }
 
 .score-orange {
-  color: #d97706;
+  color: var(--score-moyen);
 }
 
 .score-rouge {
-  color: var(--rouge);
+  color: var(--danger);
 }
 
-/* MOBILE */
+
+/* ============================================================
+   GRAPHIQUES
+   ============================================================ */
+canvas {
+  max-width: 100%;
+  max-height: 400px;
+}
+
+
+/* ============================================================
+   TÉLÉPHONE (écrans de moins de 800 px)
+   ============================================================ */
 @media (max-width: 800px) {
+  /* Tout passe sur une seule colonne */
   .layout,
   .synthese {
     grid-template-columns: 1fr;
+  }
+
+  /* Espace en bas pour que le badge Netlify ne cache pas le dernier bouton */
+  main {
+    padding-bottom: 80px;
+  }
+
+  /* Plafonds : la catégorie au-dessus, les montants en dessous */
+  .plafond-ligne {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .plafond-montants {
+    text-align: left;
+  }
+
+  /* Connexion : les deux boutons l'un sous l'autre */
+  .boutons-auth {
+    flex-direction: column;
   }
 }
